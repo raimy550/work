@@ -9,14 +9,12 @@ uses
   cxControls, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, cxLookAndFeelPainters, cxButtons, cxImageComboBox,
   cxBlobEdit, DBTables,
-  Utils, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee,
-  dxSkinDarkSide, dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian,
-  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
-  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
-  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinPumpkin,
-  dxSkinSilver, dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters,
-  dxSkinValentine, dxSkinXmas2008Blue, dxSkinscxPCPainter, Menus,
-  cxContainer, cxGroupBox, cxLabel;
+  Utils,Menus,
+  cxContainer, cxGroupBox, cxLabel, cxTextEdit, cxMaskEdit, cxDropDownEdit,
+  cxCalendar, cxDBEdit, ExtCtrls, dxNavBar,
+  dxNavBarCollns, dxNavBarBase,
+  ComCtrls, cxTreeView, dxSkinsCore, dxSkinsDefaultPainters,
+  dxSkinscxPCPainter, dxSkinsdxNavBarPainter;
 
 type
   TForm1 = class(TForm)
@@ -24,13 +22,6 @@ type
     cxGrid1Level1: TcxGridLevel;
     cxGrid1: TcxGrid;
     ds1: TDataSource;
-    tbl1: TTable;
-    cxgrdbclmnGrid1DBTableView1SpeciesNo: TcxGridDBColumn;
-    cxgrdbclmnGrid1DBTableView1Category: TcxGridDBColumn;
-    cxgrdbclmnGrid1DBTableView1Common_Name: TcxGridDBColumn;
-    cxgrdbclmnGrid1DBTableView1SpeciesName: TcxGridDBColumn;
-    cxgrdbclmnGrid1DBTableView1Lengthcm: TcxGridDBColumn;
-    cxgrdbclmnGrid1DBTableView1Length_In: TcxGridDBColumn;
     btn2: TcxButton;
     cxgrpbx1: TcxGroupBox;
     cxgrpbx2: TcxGroupBox;
@@ -39,11 +30,36 @@ type
     cxlbl2: TcxLabel;
     btn1: TcxButton;
     txt1: TStaticText;
+    cxdtdt1: TcxDateEdit;
+    cxdbdtdt1: TcxDBDateEdit;
+    tbl1: TTable;
+    tbl2: TTable;
+    ds2: TDataSource;
+    btn3: TcxButton;
+    cxgrdbclmnGrid1DBTableView1EmpNo: TcxGridDBColumn;
+    cxgrdbclmnGrid1DBTableView1LastName: TcxGridDBColumn;
+    cxgrdbclmnGrid1DBTableView1FirstName: TcxGridDBColumn;
+    cxgrdbclmnGrid1DBTableView1PhoneExt: TcxGridDBColumn;
+    cxgrdbclmnGrid1DBTableView1HireDate: TcxGridDBColumn;
+    cxgrdbclmnGrid1DBTableView1Salary: TcxGridDBColumn;
+    dxnvbr1: TdxNavBar;
+    dxnvbrgrpdxnvbr1Group1: TdxNavBarGroup;
+    dxnvbrtmdxnvbr1Item1: TdxNavBarItem;
+    dxnvbr1Item1: TdxNavBarItem;
+    dxnvbrgrpdxnvbr1Group2: TdxNavBarGroup;
+    dxnvbrtmdxnvbr1Item2: TdxNavBarItem;
+    dxnvbrtmdxnvbr1Item3: TdxNavBarItem;
+    dxnvbrtmdxnvbr1Item4: TdxNavBarItem;
+    dxnvbrtmdxnvbr1Item5: TdxNavBarItem;
+    dxnvbrtmdxnvbr1Item6: TdxNavBarItem;
 
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btn3Click(Sender: TObject);
   private
     { Private declarations }
+    procedure InitView();
   public
     { Public declarations }
   end;
@@ -54,15 +70,54 @@ var
 implementation
 
 {$R *.dfm}
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+   InitView();
+end;
+
+procedure TForm1.InitView();
+var
+  str: AnsiString;
+  group: TdxNavBarGroup;
+  bar: TdxNavBarItem;
+begin
+//  cxdbdtdt1.Properties.DisplayFormat.FormatString = "yyyy-MM-dd HH:mm:ss";
+//  cxdbdtdt1.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+//  cxdbdtdt1.Properties.EditFormat.FormatString = "yyyy-MM-dd HH:mm:ss";
+//  cxdbdtdt1.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+//  cxdbdtdt1.Properties.Mask.EditMask = "yyyy-MM-dd HH:mm:ss";
+//
+//  cxdbdtdt1.Properties.VistaDisplayMode = DevExpress.Utils.DefaultBoolean.True;
+//  cxdbdtdt1.Properties.VistaEditTime = DevExpress.Utils.DefaultBoolean.True;
+
+    cxdbdtdt1.SetTextBuf(PAnsiChar(Format('%s', ['2016-02-15 22:00:00'])));
+    group := dxnvbr1.Groups.Add;
+    group.Caption := 'group1'; 
+    bar := dxnvbr1.Items.Add;
+    bar.Caption := 'item1';
+    group.CreateLink(bar);
+
+    bar := dxnvbr1.Items.Add;
+    bar.Caption := 'item2';
+    group.CreateLink(bar);
+    
+    
+end;
 
 procedure TForm1.btn1Click(Sender: TObject);
 var
    c,r: Integer;
+   oldPoint,newPoint: TPoint;
 begin
 //  ShowMessageFmt('%s:%x', ['MainThreadID:', MainThreadID]);
 //for c := 0 to strngrd1.ColCount - 1 do
 //    for r := 0 to strngrd1.RowCount - 1 do
 //      strngrd1.Cells[c,r] := Format('%d-%d', [r,c]);
+    GetCursorPos(oldPoint);
+    newPoint.X := oldPoint.X+40;
+    newPoint.Y := oldPoint.Y+10;
+  SetCursorPos(newPoint.X, newPoint.Y);  
+  
 end;
 
 procedure GetTcxGridData(grid: TcxGrid);
@@ -206,9 +261,32 @@ begin
 //    ExportGrid4ToText(FileName, cxGrid1, True, True);
 ////  ShowMessageFmt('%s:%x:%d', ['TcxGrid:', Integer(@cxGrid1), i]);
 ////  ShowMessageFmt('%s:%x', ['TStringGrid:', Integer(@strngrd1)]);
-    h := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
-    ShowMessageFmt('%s:%d', ['window:', h]);
-      GetChildWindows(h);
+
+//    h := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
+//    ShowMessageFmt('%s:%d', ['window:', h]);
+//      GetChildWindows(h);
+
+//    InitView();
+//    nCount := dxnvbr1.Items.Count;
+//    for i:=0 to nCount-1 do
+//    begin
+//      ShowMessageFmt('%d---%s', [i, dxnvbr1.Items[i].Caption]);
+//    end;
+
+    nCount := dxnvbr1.Groups.Count;
+    for i:=0 to nCount-1 do
+    begin
+      ShowMessageFmt('%d---%s', [i, dxnvbr1.Groups[i].Caption]);
+    end;
+end;
+
+procedure TForm1.btn3Click(Sender: TObject);
+var
+  time: TDateTime;
+begin
+//  cxdbdtdt1.SetTextBuf(PAnsiChar(Format('%s', ['2000-02-15 22:00:00'])));
+
+//  cxdbdtdt1.Date := StrToDatetime('2000-02-15 22:00:00');
 end;
 
 end.

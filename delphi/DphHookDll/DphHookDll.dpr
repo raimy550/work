@@ -20,7 +20,10 @@ uses
   Utils in 'Utils.pas',
   StrMap in 'StrMap.pas',
   DataTrans in 'DataTrans.pas',
-  YuYueInfo in 'YuYueInfo.pas';
+  YuYueInfo in 'YuYueInfo.pas',
+  AutoOps in 'AutoOps.pas',
+  MyLog in 'MyLog.pas',
+  TestCase in 'TestCase.pas';
 
 {$R *.res}
 var

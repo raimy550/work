@@ -25,6 +25,8 @@ const
   cntOpSaveCls: string ='TcxButton';
   cntOpSave: string ='取消';
   cntOpSure: string ='确定';
+  cntDebug: Boolean = True;
+  cntDebugModule: Integer = 0;
 
 
 //  cntInjectExe: string = 'DphExe.exe';
@@ -53,15 +55,22 @@ const
   function FindControl(Handle: HWnd): TWinControl;
   procedure SaveData(path: string; data: string; bAppend: Boolean);
   procedure DebugOut(str: string);
+  procedure DebugShowMsg(str: string);
   procedure LogOut(str: string);
   function HasString(des, sour: string): Boolean;
   function ClassNameContains(h: HWND; cName: string): Boolean;
+  function ClassNameEqual(h: HWND; cName: string): Boolean;
+  function GetClassNameBy(h: HWND):string;
   function ControlTextContains(h: HWND; cName: string): Boolean;
   function FilterControls(h: HWND): Boolean;
   procedure SortData(dataMap: TStrMap);
   function CreateDirs(dir: string): string;
   function GetSaveDir(): string;
-  function FindeWindowBy(h: HWND;txt: string; cls: string): HWND;
+  function FindeWindowBy(h: HWND;txt: string; cls: string): HWND;overload;
+  function FindeWindowBy(h: HWND;tab: Integer; cls: string): HWND;overload;
+  function GetWindowTab(h: HWND): Cardinal;
+  procedure ClickWindow(h:HWND);overload;
+  procedure ClickWindow(h:HWND; ClassName, WindowName: PChar);overload;
 implementation
 
 var
@@ -257,7 +266,13 @@ end;
 
 procedure DebugOut(str: string);
 begin
-  OutputDebugString(PAnsiChar(str));
+  if cntDebug then
+    OutputDebugString(PAnsiChar(str));
+end;
+
+procedure DebugShowMsg(str: string);
+begin
+  ShowMessageFmt('%s', [str]);
 end;
 
 procedure SaveData(path: string; data: string; bAppend: Boolean);
@@ -305,6 +320,23 @@ begin
   Result:=HasString(cName, buf);
 end;
 
+function ClassNameEqual(h: HWND; cName: string): Boolean;
+var
+  buf: array[0..255] of Char;
+begin
+  GetClassName(h, buf, Length(buf));
+  
+  Result:= CompareStr(buf, cName)=0;
+end;
+
+function GetClassNameBy(h: HWND):string;
+var
+  buf: array[0..255] of Char;
+begin
+  GetClassName(h, buf, Length(buf));
+  Result:=buf;
+end;
+
 function ControlTextContains(h: HWND; cName: string): Boolean;
 var
   buf: array[0..255] of Char;
@@ -325,8 +357,10 @@ var
   nRet: Integer;
 begin
     GetClassName(h, buf, Length(buf));
-    nRet := Pos('TcxGrid', buf)+ Pos('Show', buf)+Pos('Shell', buf)+Pos('Internet', buf)
-    +Pos('Inner', buf)+Pos('CheckBox', buf);
+    //Pos('TcxGrid', buf)
+
+    nRet := Pos('Show', buf)+Pos('Shell', buf)+Pos('Internet', buf)
+    +Pos('Inner', buf)+Pos('CheckBox', buf)+Pos('TcxGridSite', buf);
     Result := nRet=0;
 end;
 
@@ -374,7 +408,7 @@ begin
   Result := CreateDirs(ExtractFilePath(ParamStr(0))+Utils.cntDataDir);
 end;
 
-function FindeWindowByImp(h: HWND; txt: string; cls: string): HWND;
+function FindeWindowByImp(h: HWND; txt: string; cls: string): HWND;overload;
 var
   wnd: HWND;
 begin
@@ -404,6 +438,74 @@ function FindeWindowBy(h: HWND; txt: string; cls: string): HWND;
 begin
     Result := FindeWindowByImp(h, txt, cls);
 end;
+
+
+function FindeWindowByImp(h: HWND;tab: Integer; cls: string): HWND;overload;
+var
+  wnd: HWND;
+  buf: array[0..255] of Char;
+begin
+  Result :=0;
+  if FilterControls(h)=True then
+  begin
+    GetClassName(h, buf, Length(buf));
+    DebugOut(Format('%s---%d', [buf,GetWindowTab(h)]));
+    
+    if (tab=GetWindowTab(h)) and ClassNameContains(h, cls) then
+    begin
+       Result := h;
+       Exit;
+    end;
+  end;
+
+
+  h := GetWindow(h, GW_CHILD); {第一个子窗口}
+  while h <> 0 do
+  begin
+    Result := FindeWindowByImp(h, tab, cls);
+    if Result <> 0 then
+     Exit;
+     
+    h := GetWindow(h, GW_HWNDNEXT); {下一个子窗口}
+  end;
+end;
+
+function FindeWindowBy(h: HWND;tab: Integer; cls: string): HWND;
+begin
+  Result := FindeWindowByImp(h, tab, cls);
+end;
+
+procedure ClickWindow(h:HWND);
+begin
+  if h<> 0 then
+    SendMessage(h, BM_CLICK, 0, 0);
+end;
+
+procedure ClickWindow(h:HWND; ClassName, WindowName: PChar);
+var
+  hTarg: HWND;
+begin
+  hTarg:=FindWindowEx(h, 0, ClassName, WindowName);
+  if hTarg<>0 then
+    SendMessage(hTarg, BM_CLICK, 0, 0);
+    
+end;
+
+function GetWindowTab(h: HWND): Cardinal;
+var
+  tcl: TWinControl;
+begin
+  Result := 0;
+  if FilterControls(h)=False then
+      Exit;
+
+  tcl := GetInstanceFromhWnd(h);
+  if (tcl<>nil) and tcl.Visible then
+   Result := tcl.TabOrder;
+end;
+
+
+
 
 
 initialization

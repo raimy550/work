@@ -3,8 +3,10 @@ unit view;
 interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Logic, Utils, dxCntner, dxEditor, dxEdLib, Menus,
-  cxLookAndFeelPainters, cxButtons;
+  Dialogs, StdCtrls, Logic, Utils, Menus,
+  cxLookAndFeelPainters, cxButtons, dxSkinsCore, dxSkinsDefaultPainters,
+  cxControls, cxContainer, cxEdit, cxTextEdit, dxSkinsdxNavBarPainter,
+  ExtCtrls, dxNavBar;
 
    function setHook:Boolean;stdcall;external 'DphHookDll.dll';
 
@@ -12,10 +14,11 @@ type
   TForm1 = class(TForm)
     btn1: TButton;
     btn2: TButton;
-    dxdt1: TdxEdit;
     txt1: TStaticText;
     btn3: TcxButton;
     btn4: TcxButton;
+    cxtxtdt1: TcxTextEdit;
+    dxnvbr1: TdxNavBar;
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
@@ -37,7 +40,7 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Application.ShowMainForm := False;
+  Application.ShowMainForm := True;
   setHook();
 end;
 
@@ -62,7 +65,7 @@ begin
   openDlg := TOpenDialog.Create(Self);
   if openDlg.Execute then
   begin
-    dxdt1.Text := openDlg.FileName;
+    cxtxtdt1.Text := openDlg.FileName;
     exeName := ExtractFileName(openDlg.FileName);
   end;
 end;

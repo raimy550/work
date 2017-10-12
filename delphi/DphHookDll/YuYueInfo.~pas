@@ -241,9 +241,7 @@ begin
   Result := False;
   if Utils.ClassNameContains(h, cntYuYueCls) and Utils.ControlTextContains(h, cntYuYueTxt) then
   begin
- //      ShowMessageFmt('%s', ['CYuYueInfo.UpdateOp------start']);
        WndOp := Utils.FindeWindowBy(h, Utils.cntOpSave, cntOpSaveCls);
- //       ShowMessageFmt('%s', ['CYuYueInfo.UpdateOp------end']);
        Result := True;
   end;
 end;

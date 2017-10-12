@@ -1,10 +1,11 @@
 object Form1: TForm1
-  Left = 210
-  Top = 193
-  Width = 1144
-  Height = 603
+  Left = 534
+  Top = 163
+  Width = 1486
+  Height = 719
   Caption = 'Form5'
   Color = clBtnFace
+  DockSite = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -25,23 +26,23 @@ object Form1: TForm1
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>
       DataController.Summary.SummaryGroups = <>
-      object cxgrdbclmnGrid1DBTableView1SpeciesNo: TcxGridDBColumn
-        DataBinding.FieldName = 'Species No'
+      object cxgrdbclmnGrid1DBTableView1EmpNo: TcxGridDBColumn
+        DataBinding.FieldName = 'EmpNo'
       end
-      object cxgrdbclmnGrid1DBTableView1Category: TcxGridDBColumn
-        DataBinding.FieldName = 'Category'
+      object cxgrdbclmnGrid1DBTableView1LastName: TcxGridDBColumn
+        DataBinding.FieldName = 'LastName'
       end
-      object cxgrdbclmnGrid1DBTableView1Common_Name: TcxGridDBColumn
-        DataBinding.FieldName = 'Common_Name'
+      object cxgrdbclmnGrid1DBTableView1FirstName: TcxGridDBColumn
+        DataBinding.FieldName = 'FirstName'
       end
-      object cxgrdbclmnGrid1DBTableView1SpeciesName: TcxGridDBColumn
-        DataBinding.FieldName = 'Species Name'
+      object cxgrdbclmnGrid1DBTableView1PhoneExt: TcxGridDBColumn
+        DataBinding.FieldName = 'PhoneExt'
       end
-      object cxgrdbclmnGrid1DBTableView1Lengthcm: TcxGridDBColumn
-        DataBinding.FieldName = 'Length (cm)'
+      object cxgrdbclmnGrid1DBTableView1HireDate: TcxGridDBColumn
+        DataBinding.FieldName = 'HireDate'
       end
-      object cxgrdbclmnGrid1DBTableView1Length_In: TcxGridDBColumn
-        DataBinding.FieldName = 'Length_In'
+      object cxgrdbclmnGrid1DBTableView1Salary: TcxGridDBColumn
+        DataBinding.FieldName = 'Salary'
       end
     end
     object cxGrid1Level1: TcxGridLevel
@@ -50,7 +51,7 @@ object Form1: TForm1
   end
   object btn2: TcxButton
     Left = 24
-    Top = 488
+    Top = 496
     Width = 75
     Height = 25
     Caption = 'btn2'
@@ -107,6 +108,139 @@ object Form1: TForm1
     Height = 25
     Caption = #21462#28040
     TabOrder = 3
+    OnClick = btn1Click
+  end
+  object cxdtdt1: TcxDateEdit
+    Left = 544
+    Top = 512
+    Properties.Kind = ckDateTime
+    TabOrder = 4
+    Width = 121
+  end
+  object cxdbdtdt1: TcxDBDateEdit
+    Left = 808
+    Top = 520
+    DataBinding.DataField = 'HireDate'
+    DataBinding.DataSource = ds2
+    Properties.Kind = ckDateTime
+    TabOrder = 5
+    Width = 121
+  end
+  object btn3: TcxButton
+    Left = 824
+    Top = 568
+    Width = 75
+    Height = 25
+    Caption = 'btn3'
+    TabOrder = 6
+    OnClick = btn3Click
+  end
+  object dxnvbr1: TdxNavBar
+    Left = 1176
+    Top = 80
+    Width = 193
+    Height = 425
+    ActiveGroupIndex = 0
+    DragCopyCursor = -1119
+    DragCursor = -1120
+    DragDropFlags = [fAllowDragLink, fAllowDropLink, fAllowDragGroup, fAllowDropGroup]
+    HotTrackedGroupCursor = crDefault
+    HotTrackedLinkCursor = -1118
+    View = 13
+    object dxnvbrgrpdxnvbr1Group1: TdxNavBarGroup
+      Caption = 'dxnvbrgrpdxnvbr1Group1'
+      LinksUseSmallImages = True
+      SelectedLinkIndex = -1
+      ShowAsIconView = False
+      ShowControl = False
+      TopVisibleLinkIndex = 0
+      UseControl = False
+      UseSmallImages = True
+      Visible = True
+      Links = <
+        item
+          Item = dxnvbrtmdxnvbr1Item1
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item2
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item3
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item4
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item5
+        end>
+    end
+    object dxnvbrgrpdxnvbr1Group2: TdxNavBarGroup
+      Caption = 'dxnvbrgrpdxnvbr1Group2'
+      LinksUseSmallImages = True
+      SelectedLinkIndex = -1
+      ShowAsIconView = False
+      ShowControl = False
+      TopVisibleLinkIndex = 0
+      UseControl = False
+      UseSmallImages = True
+      Visible = True
+      Links = <
+        item
+          Item = dxnvbr1Item1
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item2
+        end>
+    end
+    object dxnvbrtmdxnvbr1Item1: TdxNavBarItem
+      Caption = 'dxnvbrtmdxnvbr1Item1'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
+    object dxnvbr1Item1: TdxNavBarItem
+      Caption = 'dxnvbr1Item1'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
+    object dxnvbrtmdxnvbr1Item2: TdxNavBarItem
+      Caption = 'dxnvbrtmdxnvbr1Item2'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
+    object dxnvbrtmdxnvbr1Item3: TdxNavBarItem
+      Caption = 'dxnvbrtmdxnvbr1Item3'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
+    object dxnvbrtmdxnvbr1Item4: TdxNavBarItem
+      Caption = 'dxnvbrtmdxnvbr1Item4'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
+    object dxnvbrtmdxnvbr1Item5: TdxNavBarItem
+      Caption = 'dxnvbrtmdxnvbr1Item5'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
+    object dxnvbrtmdxnvbr1Item6: TdxNavBarItem
+      Caption = 'dxnvbrtmdxnvbr1Item6'
+      Enabled = True
+      LargeImageIndex = -1
+      SmallImageIndex = -1
+      Visible = True
+    end
   end
   object ds1: TDataSource
     DataSet = tbl1
@@ -116,8 +250,20 @@ object Form1: TForm1
   object tbl1: TTable
     Active = True
     DatabaseName = 'DBDEMOS'
-    TableName = 'biolife.db'
+    TableName = 'employee.db'
     Left = 152
-    Top = 152
+    Top = 136
+  end
+  object tbl2: TTable
+    Active = True
+    DatabaseName = 'DBDEMOS'
+    TableName = 'employee.db'
+    Left = 952
+    Top = 512
+  end
+  object ds2: TDataSource
+    DataSet = tbl2
+    Left = 1080
+    Top = 536
   end
 end
