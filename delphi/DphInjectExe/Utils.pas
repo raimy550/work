@@ -35,6 +35,7 @@ cntInjectDll: string = 'DphHookDll.dll';
   function GetInstanceFromhWnd(const hWnd: Cardinal): TWinControl;
   function cxFindVCLControl(AWnd: HWND): TWinControl;
   function FindControl(Handle: HWnd): TWinControl;
+  procedure SaveData(path: string; data: string; bAppend: Boolean);
 implementation
 
 var
@@ -44,6 +45,24 @@ var
   ThreadIDArr: array of DWORD;
   ThreadID: DWORD;
 
+ procedure SaveData(path: string; data: string; bAppend: Boolean);
+var
+  F: TextFile;
+begin
+  AssignFile(F, path);
+  if (bAppend=True) and (FileExists(path)) then
+     Append(F)
+  else
+    Rewrite(F);
+
+  
+  try
+    Write(F, data);
+  finally
+     CloseFile(F);
+  end;
+end;
+  
 function GetProcessIDByName(const name: string): DWORD;
 var
 ProcessName : string; //½ø³ÌÃû

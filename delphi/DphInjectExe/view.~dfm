@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 835
-  Top = 329
+  Left = 853
+  Top = 278
   Width = 674
   Height = 503
   Caption = 'Form1'
@@ -15,8 +15,8 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object btn1: TButton
-    Left = 56
-    Top = 320
+    Left = 32
+    Top = 392
     Width = 153
     Height = 49
     Caption = #27880#20837
@@ -24,8 +24,8 @@ object Form1: TForm1
     OnClick = btn1Click
   end
   object btn2: TButton
-    Left = 408
-    Top = 320
+    Left = 472
+    Top = 384
     Width = 169
     Height = 49
     Caption = #27880#20876#38057#23376
@@ -33,16 +33,16 @@ object Form1: TForm1
     OnClick = btn2Click
   end
   object txt1: TStaticText
-    Left = 128
-    Top = 128
+    Left = 160
+    Top = 272
     Width = 85
     Height = 17
     Caption = #36873#25321'EXE'#36335#24452#65306
     TabOrder = 2
   end
   object btn3: TcxButton
-    Left = 448
-    Top = 128
+    Left = 416
+    Top = 280
     Width = 41
     Height = 17
     Caption = '...'
@@ -56,8 +56,8 @@ object Form1: TForm1
     OnClick = btn3Click
   end
   object btn4: TcxButton
-    Left = 240
-    Top = 200
+    Left = 232
+    Top = 320
     Width = 161
     Height = 49
     Caption = #24320#22987
@@ -65,8 +65,8 @@ object Form1: TForm1
     OnClick = btn4Click
   end
   object cxtxtdt1: TcxTextEdit
-    Left = 240
-    Top = 128
+    Left = 264
+    Top = 272
     TabOrder = 5
     Text = 'cxtxtdt1'
     Width = 121

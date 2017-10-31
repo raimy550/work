@@ -19,6 +19,8 @@ Contnrs,
 Classes;
 
 const
+//  cntInjectExe: string = 'DphExe.exe';
+//  cntInjetWind: AnsiString = 'Form5';
   cntInjectExe: string = 'INFO_DMS.exe';
   cntInjetWind: AnsiString = '上汽大众经销商智能管理平台';
   cntLoginWind: AnsiString = '登录窗口';
@@ -28,9 +30,6 @@ const
   cntDebug: Boolean = True;
   cntDebugModule: Integer = 0;
 
-
-//  cntInjectExe: string = 'DphExe.exe';
-//  cntInjetWind: AnsiString = 'Form5';
 
   cntCatchSaveAllDataName: string = 'catdata.txt';
   cntSaveAllDataName: string = 'data.txt';
@@ -68,9 +67,11 @@ const
   function GetSaveDir(): string;
   function FindeWindowBy(h: HWND;txt: string; cls: string): HWND;overload;
   function FindeWindowBy(h: HWND;tab: Integer; cls: string): HWND;overload;
+  function GetCtlByClassName(h:HWND; cls:string): TWinControl;
   function GetWindowTab(h: HWND): Cardinal;
   procedure ClickWindow(h:HWND);overload;
   procedure ClickWindow(h:HWND; ClassName, WindowName: PChar);overload;
+  procedure SendKeyEventToWindow(h:HWND; key: Integer);
 implementation
 
 var
@@ -280,15 +281,11 @@ var
   F: TextFile;
 begin
   AssignFile(F, path);
-  if bAppend=True then
-  begin
-    if FileExists(path) then
-     Append(F);
-  end
+  if (bAppend=True) and (FileExists(path)) then
+     Append(F)
   else
-  Rewrite(F);
+    Rewrite(F);
 
-  
   try
     Write(F, data);
   finally
@@ -358,7 +355,6 @@ var
 begin
     GetClassName(h, buf, Length(buf));
     //Pos('TcxGrid', buf)
-
     nRet := Pos('Show', buf)+Pos('Shell', buf)+Pos('Internet', buf)
     +Pos('Inner', buf)+Pos('CheckBox', buf)+Pos('TcxGridSite', buf);
     Result := nRet=0;
@@ -475,6 +471,19 @@ begin
   Result := FindeWindowByImp(h, tab, cls);
 end;
 
+function GetCtlByClassName(h:HWND; cls:string): TWinControl;
+var
+  bRet: Boolean;
+begin
+  Result:=nil;
+   bRet := ClassNameEqual(h, cls);
+    if bRet then
+    begin
+      Result := GetInstanceFromhWnd(h);
+    end;
+
+end;
+
 procedure ClickWindow(h:HWND);
 begin
   if h<> 0 then
@@ -489,6 +498,14 @@ begin
   if hTarg<>0 then
     SendMessage(hTarg, BM_CLICK, 0, 0);
     
+end;
+
+procedure SendKeyEventToWindow(h:HWND; key: Integer);
+begin
+  SendMessage(h, WM_KEYDOWN, key, 0);
+  SendMessage(h, WM_KEYUP, key, 0);
+//  SendMessage(h, WM_KEYUP, key, 0);
+//  keybd_event(key, 0,0,0,);
 end;
 
 function GetWindowTab(h: HWND): Cardinal;

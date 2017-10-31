@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 853
-  Top = 278
+  Left = 991
+  Top = 249
   Width = 674
   Height = 503
   Caption = 'Form1'
@@ -70,18 +70,5 @@ object Form1: TForm1
     TabOrder = 5
     Text = 'cxtxtdt1'
     Width = 121
-  end
-  object dxnvbr1: TdxNavBar
-    Left = 168
-    Top = 24
-    Width = 150
-    Height = 300
-    ActiveGroupIndex = -1
-    DragCopyCursor = -1119
-    DragCursor = -1120
-    DragDropFlags = [fAllowDragLink, fAllowDropLink, fAllowDragGroup, fAllowDropGroup]
-    HotTrackedGroupCursor = crDefault
-    HotTrackedLinkCursor = -1118
-    View = 0
   end
 end

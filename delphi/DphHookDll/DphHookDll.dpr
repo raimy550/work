@@ -27,7 +27,7 @@ uses
 
 {$R *.res}
 var
-  hHook1:HHOOK;
+  hHook1, hHookKey:HHOOK;
 
 function DllInit():Integer; stdcall;
 begin
@@ -49,17 +49,26 @@ begin
 
 end;
 
+function keyProc(nCode: Integer; wParam: WPARAM;lParam: LPARAM):DWORD;stdcall;
+begin
+
+  DoProcKey(nCode, wParam, lParam);
+  Result:=CallNextHookEx(hHook1,nCode,wParam,lParam);
+
+end;
+
 function setHook():Boolean;stdcall;
 begin
 //  hHook1:=SetWindowsHookEx(WH_CALLWNDPROC,@hookProc,HInstance,0);
   hHook1:=SetWindowsHookEx(WH_MOUSE,@mouseProc,HInstance,0);
-  Result:=hHook1<>0;
+  hHookKey := SetWindowsHookEx(WH_KEYBOARD,@keyProc,HInstance,0);
+  Result:= (hHook1<>0) and (hHookKey<>0);
 end;
 
-//É¾³ýÊó±ê¹³×Ó
+//É¾³ý¹³×Ó
 function delHook:Boolean;stdcall;
 begin
-  Result:=UnhookWindowsHookEx(hHook1);
+  Result:=UnhookWindowsHookEx(hHook1) and UnhookWindowsHookEx(hHookKey);
 end;
 
 

@@ -35,6 +35,7 @@ TestCase;
 procedure Init();
 procedure DoProc(nCode,wParam,lParam: DWORD);
 procedure DoProcMouse(nCode: Integer; wParam:Integer; lParam: LongInt);
+procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
 procedure GetData(hOp: HWND);
 procedure PostData();
 
@@ -99,6 +100,25 @@ begin
 
 end;
 
+procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
+var
+  pEvt: ^EVENTMSG;
+  vKey:Integer;
+begin
+   if curProcessID=injectProcessID  then
+   begin
+    pEvt := Pointer(DWord(lParam));
+
+    CMyLog.DebugI(Format('keyProc--msg:%x',[pEvt.message]));
+  
+    if pEvt.message = WM_KEYDOWN then
+    begin
+       vKey := LOBYTE(pEvt.paramL);
+       CMyLog.DebugI(Format('WM_KEYDOWN--value:%x',[vKey]));
+    end;
+   end;
+end;
+
 procedure DoProcMouse(nCode: Integer;wParam:WPARAM; lParam: LPARAM);
 var
   p: PMouseHookStruct;
@@ -107,7 +127,7 @@ begin
    if curProcessID=injectProcessID  then
    begin
       p := PMouseHookStruct(lParam);
-      DebugOut(Format('code=%x, wParam=%x, lParam(hWnd=%x, x=%d, y=%d)', [nCode, wParam, p.hwnd, p.pt.X, p.pt.Y]));
+      //DebugOut(Format('code=%x, wParam=%x, lParam(hWnd=%x, x=%d, y=%d)', [nCode, wParam, p.hwnd, p.pt.X, p.pt.Y]));
       //ShowMessageFmt('%s', ['---------DoProcMouse']);
       if wParam=WM_LBUTTONUP then
       begin

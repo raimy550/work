@@ -25,6 +25,7 @@ const
 
 type
   CMyLog = class(TObject)
+  
   public
   class procedure DebugE(str: string);
   class procedure DebugI(str: string);

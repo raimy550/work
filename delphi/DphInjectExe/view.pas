@@ -18,7 +18,6 @@ type
     btn3: TcxButton;
     btn4: TcxButton;
     cxtxtdt1: TcxTextEdit;
-    dxnvbr1: TdxNavBar;
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
@@ -52,8 +51,13 @@ end;
 procedure TForm1.btn2Click(Sender: TObject);
 var
   bRet:  Boolean;
+  i:Integer;
 begin
   bRet := setHook();
+//  for i:=0 to 20 do
+//  begin
+//  SaveData(ExtractFilePath(ParamStr(0))+'test'+'.txt', '1234567890'+#13#10, True); 
+//  end; 
 
 end;
 

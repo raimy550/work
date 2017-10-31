@@ -27,7 +27,9 @@ type
 
   protected
   procedure Execute;override;
-  procedure DoOpsExport;
+  procedure DoOpsTypeExport;
+  procedure DoProcessLogin;
+  procedure DoProcessSelect;
 
   public
     constructor Create(autoType: AutoOpType);overload;
@@ -40,7 +42,7 @@ implementation
      while not Terminated do
      begin
         if mAutoOpType=AutoOpType_Export then
-          DoOpsExport;
+          DoOpsTypeExport;
          Utils.DebugOut('----------Execute');
         Sleep(500);
      end;
@@ -52,16 +54,26 @@ implementation
       mAutoOpType := autoType;
       mCurOpProcess := OpExport_Login;
    end;
+   
+   procedure CThreadOps.DoOpsTypeExport;
+   begin
+     if mCurOpProcess=OpExport_Login then
+     begin
+       DoProcessLogin;
+     end
+     else if mCurOpProcess=OpExport_Select then
+     begin
+       DoProcessSelect;
+     end;
+   end;
 
-   procedure CThreadOps.DoOpsExport;
+   procedure  CThreadOps.DoProcessLogin;
    var
      hParent, hTarget: HWND;
      tcl: TWinControl;
      pswEdit: TcxTextEdit;
    begin
-     if mCurOpProcess=OpExport_Login then
-     begin
-       Utils.DebugOut('----------DoOpsExport');
+      Utils.DebugOut('----------DoOpsExport');
         hParent := FindWindow(nil,PAnsiChar(Utils.cntLoginWind));
         Utils.DebugOut('----------DoOpsExport1');
         if hParent<>0 then
@@ -75,20 +87,28 @@ implementation
             pswEdit.SetTextBuf('123');
             hTarget := Utils.FindeWindowBy(hParent, 'È·¶¨', 'TcxButton');
             Utils.ClickWindow(hTarget);
-            Terminate;
+            mCurOpProcess := OpExport_Select;
           end;
           Utils.DebugOut('----------DoOpsExport4');
 
         end;
-     end;
    end;
 
-
+   procedure CThreadOps.DoProcessSelect;
+   var
+     hParent, hTarget: HWND;
+   begin
+      hParent := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
+       if hParent<>0 then
+       begin
+       
+       end;
+   end;
    
 // class COpsManager
    constructor COpsManager.Create;
    begin
-
+     
    end;
 
    procedure COpsManager.StartOps(opType: AutoOpType);

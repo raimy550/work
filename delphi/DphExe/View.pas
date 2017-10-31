@@ -117,6 +117,8 @@ begin
     newPoint.X := oldPoint.X+40;
     newPoint.Y := oldPoint.Y+10;
   SetCursorPos(newPoint.X, newPoint.Y);  
+
+ 
   
 end;
 

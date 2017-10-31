@@ -5,7 +5,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Logic, Utils, Menus,
   cxLookAndFeelPainters, cxButtons, dxSkinsCore, dxSkinsDefaultPainters,
-  cxControls, cxContainer, cxEdit, cxTextEdit;
+  cxControls, cxContainer, cxEdit, cxTextEdit, dxSkinsdxNavBarPainter,
+  ExtCtrls, dxNavBar;
 
    function setHook:Boolean;stdcall;external 'DphHookDll.dll';
 
@@ -50,8 +51,13 @@ end;
 procedure TForm1.btn2Click(Sender: TObject);
 var
   bRet:  Boolean;
+  i:Integer;
 begin
-  bRet := setHook();
+//  bRet := setHook();
+  for i:=0 to 20 do
+  begin
+  SaveData(ExtractFilePath(ParamStr(0))+'test'+'.txt', '1234567890'+#13#10, True); 
+  end; 
 
 end;
 

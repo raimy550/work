@@ -114,8 +114,8 @@ begin
 //    for r := 0 to strngrd1.RowCount - 1 do
 //      strngrd1.Cells[c,r] := Format('%d-%d', [r,c]);
     GetCursorPos(oldPoint);
-    newPoint.X := oldPoint.X+40;   
-  ¡¡newPoint.Y := oldPoint.Y+10;
+    newPoint.X := oldPoint.X+40;
+    newPoint.Y := oldPoint.Y+10;
   SetCursorPos(newPoint.X, newPoint.Y);  
   
 end;

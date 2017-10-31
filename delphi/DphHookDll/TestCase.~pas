@@ -28,6 +28,7 @@ interface
   uLkJSON,
   AutoOps,
   MyLog,
+  Variants,
   DataTrans;
 type
   CTestCase = class(TObject)
@@ -36,17 +37,27 @@ type
     mCOpsManager: COpsManager;
     strTab: string;
   private
+    //测试具体控件
     procedure   TestWindows();
     procedure   TestWindowsImp(h: HWND);
     procedure   DoTestWindows(h: HWND);
     procedure   DoTestDxNavBar(h: HWND);
     procedure   DoTestTreeView(h: HWND);
-    procedure   GetTcxGridData(grid: TcxGrid);
+    procedure   DoTestTcxGridView(h: HWND);
+    procedure   DoTestTcxDBDateEdit(h: HWND);
+    procedure   DoTestTcxCheckBox(h: HWND);
     
+    procedure   GetTcxGridData(grid: TcxGrid);
+    //自动操作
     procedure  TestAutoOps();
+    //截取窗口数据
     procedure  CatchWindowsData();
     procedure  CatchWindowsDataImp(h: HWND);
     procedure  DoCatchWindows(h: HWND);
+    //获取控件坐标
+    procedure TestLocation();
+    
+    
     
   public
     procedure StartTest();
@@ -55,16 +66,27 @@ type
 implementation
 
   procedure CTestCase.StartTest;
+  var
+    i:Integer;
   begin
     mCOpsManager :=COpsManager.Create;
   //  测试控件类型
-  //TestWindows();
+  TestWindows();
     
   //  测试自动操作
   //TestAutoOps();
 
   //  抓数据
-  CatchWindowsData();
+  //CatchWindowsData();
+
+  //位置点
+  //TestLocation();
+
+//  for i:=0 to 20 do
+//  begin
+//  SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt', '1234567890'+#13#10, True); 
+//  end; 
+
    
   end;
 
@@ -108,6 +130,70 @@ implementation
         end;
       end;
     end;
+  end;
+  
+  procedure CTestCase.DoTestTcxGridView(h: HWND);
+   var
+    twcl: TWinControl;
+    tGrid: TcxGrid;
+  begin
+      twcl := Utils.GetCtlByClassName(h,'TcxGrid');
+      if (twcl<>nil) then
+      begin
+      tGrid := TcxGrid(twcl);
+      if(tGrid<>nil)  then
+        begin
+  //        s1 := Format('tcxgrid  find: %x view count = %d ', [Integer(@tGrid), tGrid.Levels.Count]);
+  //        MessageBox(0, PAnsiChar(AnsiString(s1)), 'tcxgrid', MB_OK);
+          GetTcxGridData(tGrid);
+        end
+      end;
+    
+  end;
+  
+  procedure  CTestCase.DoTestTcxDBDateEdit(h: HWND);
+   var
+    bRet: Boolean;
+    twcl: TWinControl;
+    tCtl: TcxDBDateEdit;
+  begin
+      twcl :=  Utils.GetCtlByClassName(h,'TcxDBDateEdit');
+      if (twcl<>nil) then
+      begin
+        tCtl := TcxDBDateEdit(twcl);
+        tCtl.SetTextBuf(PAnsiChar('2012-07-08 23:12:12'));
+  //    cxDBDateEdit.Date := StrToDateTime('2012-07-08 23:12:12');
+  //    ShowMessageFmt('%s', ['-----------3']);
+      end;
+      
+  end;
+
+  procedure  CTestCase.DoTestTcxCheckBox(h: HWND);
+  var
+    bRet: Boolean;
+    twcl: TWinControl;
+    tCtl: TcxCheckBox;
+  begin
+      twcl :=  Utils.GetCtlByClassName(h,'TcxCheckBox');
+      if (twcl<>nil) then
+      begin
+//        tCtl := TcxCheckBox(twcl);
+//        ShowMessageFmt('%s',['TcxCheckBox-----start']);
+//        if tCtl.Checked then
+//        begin
+//           ShowMessageFmt('%s--%s',['TcxCheckBox','是']);
+//           tCtl.Checked := False;
+//        end
+//        else
+//        begin
+//          ShowMessageFmt('%s--%s',['TcxCheckBox','否']);
+//          tCtl.Checked := True;
+//        end;
+//          
+//        ShowMessageFmt('%s',['TcxCheckBox-----end']);
+        Utils.SendKeyEventToWindow(h, VK_SPACE);
+      end;
+      
   end;
   
   procedure CTestCase.DoTestDxNavBar(h: HWND);
@@ -160,79 +246,15 @@ implementation
   end;
   
   procedure CTestCase.DoTestWindows(h: HWND);
-  var
-    buf: array[0..255] of Char; {这个缓冲区是获取类名用的, 如果不需要可以删除}
-    s: AnsiString;
-    s1: AnsiString;
-    nRet: Integer;
-    bRet, bRet1: Boolean;
-    nRet1: Integer;
-    count: Integer;
-    Grid, Grid1: TStringGrid;
-    tGrid: TcxGrid;
-    cxBtn: TcxButton;
-    cxDBDateEdit: TcxDBDateEdit;
-    dxNavBar: TdxNavBar;
-  
-    i: Integer;
-    tcl: TWinControl;
-    cxCheckBox: TcxCheckBox ;
   begin
     if Utils.FilterControls(h)=False then
       Exit;
 
      //DoTestTreeView(h);
-     DoTestDxNavBar(h);
-    
-    tcl := Utils.GetInstanceFromhWnd(h);
-    if tcl<>nil then
-  //  bRet := Utils.ClassNameContains(h, 'TcxDBDateEdit');
-  //    bRet := Utils.ClassNameContains(h, 'TcxGrid');
-  //  bRet := Utils.ClassNameContains(h, 'TcxCheckBox');
-    if bRet then
-      begin
-  //    cxCheckBox := TcxCheckBox(tcl);
-  //    ShowMessageFmt('%s',['TcxCheckBox-----start1']);
-  //    if cxCheckBox.Checked then
-  //    ShowMessageFmt('%s--%s',['TcxCheckBox','是'])
-  //    else
-  //    ShowMessageFmt('%s--%s',['TcxCheckBox','否']);
-  //    ShowMessageFmt('%s',['TcxCheckBox-----end']);
+     //DoTestDxNavBar(h);
+     DoTestTcxGridView(h);
+     //DoTestTcxCheckBox(h);
 
-
-  //    cxDBDateEdit := TcxDBDateEdit(tcl);
-  //    cxDBDateEdit.SetTextBuf(PAnsiChar('2012-07-08 23:12:12'));
-  ////    cxDBDateEdit.Date := StrToDateTime('2012-07-08 23:12:12');
-  ////    ShowMessageFmt('%s', ['-----------3']);
-
-  //    tGrid := TcxGrid(Utils.GetInstanceFromhWnd(h));
-  //    if(tGrid<>nil)  then
-  //      begin
-  ////        s1 := Format('tcxgrid  find: %x view count = %d ', [Integer(@tGrid), tGrid.Levels.Count]);
-  ////        MessageBox(0, PAnsiChar(AnsiString(s1)), 'tcxgrid', MB_OK);
-  //        GetTcxGridData(tGrid);
-  //      end
-
-  ////    Grid := TStringGrid(Utils.GetInstanceFromhWnd(h));
-  //    Grid := TStringGrid(FindControl(h));
-  //    Grid1 := TStringGrid(Utils.GetInstanceFromhWnd(h));
-  //    if(Grid<>nil)  then
-  //      begin
-  //        s1 := Format('TStringGrid  find: %x , %x', [Integer(@Grid), Integer(@Grid1)]);
-  //        MessageBox(0, PAnsiChar(AnsiString(s1)), 'TStringGrid', MB_OK);
-  //        GetGridData(Grid);
-  //      end
-
-  // TcxButton
-  //    cxBtn := TcxButton(Utils.GetInstanceFromhWnd(h));
-  //    if(cxBtn<>nil)  then
-  //      begin
-  //       i := cxBtn.GetTextLen();
-  //       cxBtn.GetTextBuf(buf, 255);
-  //       MessageBox(0, buf,'Button', MB_OK);
-  //       ShowMessageFmt('%s---%d', ['TcxButton Text len=', i]);
-  //      end
-    end;
   end;
 
   procedure CTestCase.GetTcxGridData(grid: TcxGrid);
@@ -242,9 +264,10 @@ implementation
     cxView, cxView1: TcxCustomGridView;
     i,j, nRowCount,nColCount: Integer;
     rowInfo: TcxRowInfo;
-    s, s1: string;
+    s, s1, tmp: string;
     p: Pointer ;
     sStr: ShortString;
+    vari: Variant;
 
   begin
       if grid.ActiveLevel = nil then
@@ -271,43 +294,81 @@ implementation
              //ShowMessageFmt('%s%d',['GetRecordCount:', nRowCount]);
              nColCount := cxView.DataController.GetItemCount();
              //ShowMessageFmt('%s%d',['GetItemCount:', nColCount]);
+
+             s := '';
+             s1 := '';
+             if nRowCount>0 then
+             begin
+               //字段值
+               for j:=0 to nColCount-1 do
+               begin
+                 cxGridDBTableView := TcxGridDBTableView(cxView); 
+                 s1 := Format('%s', [cxGridDBTableView.Columns[j].Caption]);
+                 if j<>0 then
+                  s1 := #9+s1;
+                  s := Concat(s, s1);
+               end;
+               s := Concat(s, Char(13), Chr(10));
+               SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt',s, True);
+
+//               字段类型
+//                s := '';
+//                s1 := '';
+//               for j:=0 to nColCount-1 do
+//               begin
+//                 vari := cxView.DataController.Values[0,j];
+//                 s1 := Format('%s', [VarTypeAsText(VarType(vari))]);
+//                 if j<>0 then
+//                  s1 := #9+s1;
+//                  s := Concat(s, s1);
+//               end;
+//               s := Concat(s, Char(13), Chr(10));
+//               SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt',s, True);
+             end;
+
+               
+             s := '';
+             s1 := '';
              for i := 0 to nRowCount-1 do
              begin
              if i<>0 then s := Concat(s, Char(13), Chr(10));
               for j:=0 to nColCount-1 do
                begin
-                 s1 := Format('%s    ', [cxView.DataController.Values[i,j]]);
+//               tmp := string(cxView.DataController.Values[i,j]);
+//               
+//                 if Length(tmp)=0 then
+//                   tmp := 'nil';
+//                  vari := cxView.DataController.GetDisplayText[i,j];
+                  
+//                  if i=0 then
+//                  begin
+//                     //CMyLog.DebugMsg(Format('name=%s, type=%s',[cxGridDBTableView.Columns[j].Caption, VarTypeAsText(VarType(vari))]));
+//                  end;
+
+                 // cxView.DataController.GetDisplayText()
+                 s1 := Format('%s', [cxView.DataController.GetDisplayText(i,j)]);
+                 
+                 if j<>0 then
+                  s1 := #9+s1;
+                  
                  s := Concat(s, s1);
                end;
+               
+               if ((0=(i mod 100)) and (i>99)) or (i=nRowCount-1)then
+                 begin
+                    SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt',s, True);
+                    s := '';
+                 end;
              end;
            end;
 
            if nRowCount>0 then
            begin
-              SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt',s, False);
+              //SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt',s, True);
               mGridCount := mGridCount+1;
            end;
-
-            
-  //       p := cxView.ClassInfo();
-  //       sStr := cxView.ClassName();
-  //        if cxView is TcxGridTableView then
-  //          ShowMessageFmt('%s',['cxGridView is TcxGridTableView']);
-  //
-  //        if cxView is TcxGridDBTableView then
-  //          ShowMessageFmt('%s',['cxGridView is TcxGridDBTableView']);
-  //
-  //       grid.FocusedView :=  TcxGridTableView(grid.FocusedView);
-  //
-  //        if grid.FocusedView is TcxGridTableView then
-  //          ShowMessageFmt('%s',['FocusedView is TcxGridTableView']);
-  //          
-  ////       FileName := ExtractFilePath(ParamStr(0))+Utils.cntSaveGridDataName;
-  ////       cxExportGrid4Link.ExportGrid4ToText(FileName, grid, True, True);
          end;
       end;
-  //   FileName := ExtractFilePath(ParamStr(0))+Utils.cntSaveGridDataName;
-  //   ExportGridToText(FileName, grid, True, True);
   end;
   
   procedure CTestCase.TestWindowsImp(h: HWND);
@@ -323,15 +384,25 @@ implementation
   
   procedure CTestCase.TestWindows;
   var
-    h : HWND;
+    h, h1 : HWND;
   begin
      h := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
-     TestWindowsImp(h);
+     //h1 := Utils.FindeWindowBy(h, '车主车辆管理', 'TbsCustomerMangageForm');
+     //h1 := Utils.FindeWindowBy(h, '结算单查询', 'TbsBalanceAccountQueryForm');
+     h1 := Utils.FindeWindowBy(h, '客户筛选设置', 'TbsCustomFilterSetForm');
+     //h1 := h;
+     if h1<>0 then
+     begin
+      CMyLog.DebugMsg('-------------找到根窗口');
+      TestWindowsImp(h1);
+     end;
+//      h := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
+//      TestWindowsImp(h);
   end;
 
   procedure CTestCase.TestAutoOps;
   begin
-     CMyLog.DebugMsg('--------TestAutoOps');
+      CMyLog.DebugMsg('--------TestAutoOps');
       mCOpsManager.StartOps(AutoOpType_Export);
   end;
   
@@ -382,5 +453,17 @@ implementation
      ShowMessageFmt('%s', [strTab]);
      Utils.SaveData(Utils.GetSaveDir+Utils.cntCatchSaveAllDataName,
                 strTab, False);
+  end;
+
+  procedure CTestCase.TestLocation;
+  var
+    hInjet, hTest: HWND;
+    rect: TRect;
+  begin
+      CMyLog.DebugMsg('--------TestLocation');
+      hInjet := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
+      hTest := Utils.FindeWindowBy(hInjet, '取消', 'TcxButton');
+      GetWindowRect(hTest, rect);
+      CMyLog.DebugMsg(Format('(%d,%d, %d,%d)', [rect.Left, rect.Top, rect.Right, rect.Bottom]));
   end;
 end.
