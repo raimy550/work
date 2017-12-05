@@ -2,19 +2,8 @@ unit LoginInfo;
 
 interface
  uses
-  Windows,
-  Messages,
-  Dialogs,
-  Controls,
-  StdCtrls,
-  Utils,
-  SysUtils,
-  Classes,
-  Contnrs,
-  cxCheckBox,
-  StrMap,
-  StrUtils,
-  uLkJSON;
+  Windows, Messages,Dialogs,Controls,Utils,SysUtils,Classes,
+  cxCheckBox,StrMap,uLkJSON,ConfigManager;
 
 var
   strCompany: string;
@@ -108,7 +97,11 @@ begin
 
    FileName := Utils.GetSaveDir()+Utils.cntSaveLoginFileName;
    TlkJSONstreamed.SaveToFile(jsBase, FileName);
-   //ShowMessageFmt('%s%s%s', ['信息获取成功,', '保存路径：', FileName]);
+
+   TConfigManager.GetInstance.WriteConfig('LoginInfo', 'companyName', DataMap.Get(DataMap.FKeyList[0]));
+   TConfigManager.GetInstance.WriteConfig('LoginInfo', 'userCode', DataMap.Get(DataMap.FKeyList[1]));
+   TConfigManager.GetInstance.WriteConfig('LoginInfo', 'userPsw', DataMap.Get(DataMap.FKeyList[2]));
+   
 end;
 
 end.

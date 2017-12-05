@@ -2,39 +2,18 @@ unit TestCase;
 
 interface
   uses
-  Windows,
-  Messages,
-  Dialogs,
-  Grids,
-  cxGrid,
-  Controls,
-  cxButtons,
-  StdCtrls,
-  TlHelp32,
-  SysUtils,
-  cxGridLevel,
-  cxGridDBTableView,
-  cxGridTableView,
-  cxGridCustomView,
-  cxDBEdit,
-  cxCustomData,
-  cxTreeView,
-  cxCheckBox,
-  dxNavBar,
-  dxNavBarCollns,
-  ComCtrls,
-  Utils,
-  DataManager,
-  uLkJSON,
-  AutoOps,
-  MyLog,
-  Variants,
-  DataTrans;
+  Windows,Messages,Dialogs,cxGrid,Controls,SysUtils,Classes,
+  cxGridDBTableView,cxGridTableView,cxGridCustomView,cxDBEdit,cxCustomData,
+  cxTreeView,cxCheckBox,dxNavBar,dxNavBarCollns,ComCtrls,Utils,
+  AutoOps,MyLog,Variants,OpManager,cxCalendar,ConfigManager;
 type
   CTestCase = class(TObject)
   private
     mGridCount : Integer;
     mCOpsManager: COpsManager;
+    mTOpManager: TOpManager;
+    mTConfigManager: TConfigManager;
+    
     strTab: string;
   private
     //测试具体控件
@@ -56,13 +35,27 @@ type
     procedure  DoCatchWindows(h: HWND);
     //获取控件坐标
     procedure TestLocation();
+    //测试屏幕点击
+    procedure TestClickPoint();
     
     
     
   public
     procedure StartTest();
+    procedure TestCatchWindowsData();
     
   end;
+
+{ TTestPointClickThread }
+
+  TTestPointClickThread = class(TThread)
+
+   protected
+    procedure Execute;override;
+   
+
+  end;
+
 implementation
 
   procedure CTestCase.StartTest;
@@ -70,8 +63,10 @@ implementation
     i:Integer;
   begin
     mCOpsManager :=COpsManager.Create;
+    mTOpManager := TOpManager.Create;
+    mTConfigManager := TConfigManager.GetInstance;
   //  测试控件类型
-  TestWindows();
+  //TestWindows();
     
   //  测试自动操作
   //TestAutoOps();
@@ -87,9 +82,25 @@ implementation
 //  SaveData(Utils.GetSaveDir()+Format('%s%d', ['grid', mGridCount])+'.txt', '1234567890'+#13#10, True); 
 //  end; 
 
-   
+//  mCOpsManager.StartOps(AutoOpType_SearchClient);
+
+// 自动操作测试
+//  mTOpManager.StartOps();
+
+//kill
+//   CMyLog.DebugMsg(TConfigManager.GetInstance.GetExePath);
+//   Utils.KillAppExe(TConfigManager.GetInstance.GetExePath);
+//   CMyLog.DebugMsg(TConfigManager.GetInstance.GetExePath);
+
+//测试定点点击
+TestClickPoint;
   end;
 
+  procedure CTestCase.TestCatchWindowsData();
+  begin
+    CatchWindowsData();
+  end;
+  
   procedure CTestCase.DoTestTreeView(h: HWND);
   var
     bRet: Boolean;
@@ -156,13 +167,16 @@ implementation
     bRet: Boolean;
     twcl: TWinControl;
     tCtl: TcxDBDateEdit;
+    cxDataEdit: TcxDateEdit;
   begin
-      twcl :=  Utils.GetCtlByClassName(h,'TcxDBDateEdit');
+      twcl :=  Utils.GetCtlByClassName(h,'TcxDateEdit');
       if (twcl<>nil) then
       begin
-        tCtl := TcxDBDateEdit(twcl);
-        tCtl.SetTextBuf(PAnsiChar('2012-07-08 23:12:12'));
-  //    cxDBDateEdit.Date := StrToDateTime('2012-07-08 23:12:12');
+        cxDataEdit := TcxDateEdit(twcl);
+        CMyLog.DebugMsg('find-----TcxDateEdit');
+  //      tCtl.SetTextBuf(PAnsiChar('2012-07-08 23:12:12'));
+  //    cxDataEdit.Date := StrToDateTime('2012-07-08 23:12:12');
+        cxDataEdit.SetTextBuf(PAnsiChar('2012-07-08 23:12:12'));
   //    ShowMessageFmt('%s', ['-----------3']);
       end;
       
@@ -252,8 +266,9 @@ implementation
 
      //DoTestTreeView(h);
      //DoTestDxNavBar(h);
-     DoTestTcxGridView(h);
+     //DoTestTcxGridView(h);
      //DoTestTcxCheckBox(h);
+     DoTestTcxDBDateEdit(h);
 
   end;
 
@@ -289,11 +304,8 @@ implementation
               ShowMessageFmt('%s',['DataController is nil'])
            else
            begin
-             //ShowMessageFmt('%s',['DataController is not nil']);
              nRowCount := cxView.DataController.GetRowCount();
-             //ShowMessageFmt('%s%d',['GetRecordCount:', nRowCount]);
              nColCount := cxView.DataController.GetItemCount();
-             //ShowMessageFmt('%s%d',['GetItemCount:', nColCount]);
 
              s := '';
              s1 := '';
@@ -334,18 +346,6 @@ implementation
              if i<>0 then s := Concat(s, Char(13), Chr(10));
               for j:=0 to nColCount-1 do
                begin
-//               tmp := string(cxView.DataController.Values[i,j]);
-//               
-//                 if Length(tmp)=0 then
-//                   tmp := 'nil';
-//                  vari := cxView.DataController.GetDisplayText[i,j];
-                  
-//                  if i=0 then
-//                  begin
-//                     //CMyLog.DebugMsg(Format('name=%s, type=%s',[cxGridDBTableView.Columns[j].Caption, VarTypeAsText(VarType(vari))]));
-//                  end;
-
-                 // cxView.DataController.GetDisplayText()
                  s1 := Format('%s', [cxView.DataController.GetDisplayText(i,j)]);
                  
                  if j<>0 then
@@ -389,8 +389,9 @@ implementation
      h := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
      //h1 := Utils.FindeWindowBy(h, '车主车辆管理', 'TbsCustomerMangageForm');
      //h1 := Utils.FindeWindowBy(h, '结算单查询', 'TbsBalanceAccountQueryForm');
-     h1 := Utils.FindeWindowBy(h, '客户筛选设置', 'TbsCustomFilterSetForm');
-     //h1 := h;
+     //h1 := Utils.FindeWindowBy(h, '客户筛选设置', 'TbsCustomFilterSetForm');
+     
+     h1 := h;
      if h1<>0 then
      begin
       CMyLog.DebugMsg('-------------找到根窗口');
@@ -424,7 +425,7 @@ implementation
             tab := tcl.TabOrder;
             tcl.GetTextBuf(buf, 255);
             //ShowMessageFmt('%s----%d ', [buf, tab]);
-            s1 := Format('%s----%d ', [buf, tab]);
+            s1 := Format('%s----%s----%d ', [Utils.GetClassNameBy(h), buf, tab]);
             s := Concat(s, Char(13), Char(10));
             strTab := Concat(strTab, s);
             strTab := Concat(strTab, s1);
@@ -466,4 +467,58 @@ implementation
       GetWindowRect(hTest, rect);
       CMyLog.DebugMsg(Format('(%d,%d, %d,%d)', [rect.Left, rect.Top, rect.Right, rect.Bottom]));
   end;
+  
+procedure CTestCase.TestClickPoint;
+var
+   hInjet, hTest: HWND;
+   rect: TRect;
+   point:TPoint;
+begin
+//   hInjet := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
+//   hTest := Utils.FindeWindowBy(hInjet, '', 'TdxNavBar');
+//   if hTest<>0 then
+//   begin
+//     CMyLog.DebugMsg('-------Find TdxNavBar');
+////     GetWindowRect(hTest, rect);
+////    CMyLog.DebugMsg(Format('(%d,%d, %d,%d)', [rect.Left, rect.Top, rect.Right, rect.Bottom]));
+//   Utils.ClickPoint(60, 590);
+//   Utils.ClickPoint(68, 155);
+//   Utils.ClickPoint(85, 185);
+//   Utils.WaitOpTimeOut(hInjet, '客户筛选设置', 'TbsCustomFilterSetForm', Utils.cntWaitWndTime);
+//   Sleep(5000);
+//   Utils.ClickPoint(183, 170);
+//   Utils.ClickPoint(560, 170);
+   TTestPointClickThread.Create(False);
+  
+end;
+
+{ TTestPointClickThread }
+
+procedure TTestPointClickThread.Execute;
+var
+   hInjet, hTest: HWND;
+   rect: TRect;
+   point:TPoint;
+begin
+   inherited;
+   
+   hInjet := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
+   hTest := Utils.FindeWindowBy(hInjet, '', 'TdxNavBar');
+   if hTest<>0 then
+   begin
+     CMyLog.DebugMsg('-------Find TdxNavBar');
+//     GetWindowRect(hTest, rect);
+//    CMyLog.DebugMsg(Format('(%d,%d, %d,%d)', [rect.Left, rect.Top, rect.Right, rect.Bottom]));
+   Utils.ClickPoint(60, 590);
+   Utils.ClickPoint(68, 155);
+   Utils.ClickPoint(85, 185);
+   Utils.WaitOpTimeOut(Utils.cntInjectExe, Utils.cntWaitWndTime);
+   //Utils.WaitOpTimeOut(hInjet, '客户筛选设置', 'TbsCustomFilterSetForm', Utils.cntWaitWndTime);
+   Sleep(5000);
+   Utils.ClickPoint(183, 170);
+   Utils.ClickPoint(560, 170);
+   end;
+  
+end;
+
 end.

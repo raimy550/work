@@ -7,37 +7,65 @@ SysUtils,
 Variants,
 TlHelp32,
 Windows,
-Utils;
+Utils,
+IniFiles,
+MyLog;
 
-const
+//const
 //cntInjectDll: string = 'DelphiHookDll.dll';
 //cntInjectExe: string = 'vcldelphi.exe';
 
-procedure Init();
-procedure DoStart();
-function InjectDll(const DllFullPath: string; const dwRemoteProcessId: Cardinal): Boolean;
-function GetProcessIDByName(const name: string): DWORD;
+ type TLogic = class(TObject)
+ private
+   mInitFile: TIniFile;
+   mExePath: string;
+  public
+    constructor Create;
+    procedure DoStart(path:string);
+    procedure DoRemoteInject();
+    procedure DoTimerMonitor();
+    function IsExeFileExist: Boolean;
+    
+  private
+    procedure Init();
+    procedure InitExeFilePath();
+    function InjectDll(const DllFullPath: string; const dwRemoteProcessId: Cardinal): Boolean;
+    function GetProcessIDByName(const name: string): DWORD;
+    function EnableDebugPriv: Boolean;
+    end;
 
 implementation
-  procedure Init();
-  begin
-
-  end;
-
-  procedure DoStart();
+  procedure TLogic.Init();
   var
-  dir, path: string;
-  pID: Cardinal;
-
+    cRet: Cardinal;
   begin
-     dir := ExtractFileDir(ParamStr(0));
-     path := Concat(dir, '\', Utils.cntInjectDll);
-     pID := GetProcessIDByName(Utils.cntInjectExe);
-     InjectDll(path, pID);
+    InitExeFilePath;
+    if mExePath<>'' then
+    begin
+      cRet := Utils.GetProcessIDByName(Utils.cntInjectExe);
+      if cRet=0 then
+      begin
+        Utils.RunApp(mExePath);
+        DoRemoteInject();
+      end;
+    end;
+  end;
+
+  procedure TLogic.DoStart(path:string);
+  var
+    bRet:Boolean;
+    iniPath: string;
+  begin
+    iniPath := ExtractFilePath(ParamStr(0))+Utils.cntCfgFileName;
+    mInitFile := TIniFile.Create(iniPath);
+    mInitFile.WriteString('ExePath', 'path', path);
+
+    RunApp(Utils.cntInjectExe);
+    DoRemoteInject();
   end;
 
 
-function GetProcessIDByName(const name: string): DWORD;
+function TLogic.GetProcessIDByName(const name: string): DWORD;
 var
 ProcessName : string; //进程名
 ProcessID : integer; //进程表示符
@@ -63,7 +91,7 @@ FProcessEntry32:TProcessEntry32; //进程入口的结构体信息
   end;
 end;
 
-function EnableDebugPriv: Boolean;
+function TLogic.EnableDebugPriv: Boolean;
 var
   hToken: THandle;
   tp: TTokenPrivileges;
@@ -85,7 +113,7 @@ begin
   end;
 end;
 
-function InjectDll(const DllFullPath: string; const dwRemoteProcessId: Cardinal): Boolean;
+function TLogic.InjectDll(const DllFullPath: string; const dwRemoteProcessId: Cardinal): Boolean;
 var
   hRemoteProcess, hRemoteThread: THandle;
   pszLibFileRemote: Pointer;
@@ -145,6 +173,50 @@ begin
       CloseHandle(hRemoteProcess);
     end;
   end;
+end;
+
+constructor TLogic.Create;
+begin
+  Init;
+end;
+
+procedure TLogic.DoRemoteInject;
+  var
+  dir, path: string;
+  pID: Cardinal;
+
+  begin
+     dir := ExtractFileDir(ParamStr(0));
+     path := Concat(dir, '\', Utils.cntInjectDll);
+     pID := GetProcessIDByName(Utils.cntInjectExe);
+     InjectDll(path, pID);
+  end;
+
+procedure  TLogic.InitExeFilePath();
+var
+    iniPath: string;
+begin
+    iniPath := ExtractFilePath(ParamStr(0))+Utils.cntCfgFileName;
+    mInitFile := TIniFile.Create(iniPath);
+    mExePath := mInitFile.ReadString('ExePath', 'path', '');
+end;
+
+procedure TLogic.DoTimerMonitor;
+var
+  time: TDateTime;
+  nRet: Cardinal;
+begin
+   nRet := Utils.GetProcessIDByName(Utils.cntInjectExe);
+   if nRet=0 then
+   begin
+      Utils.RunApp(mExePath);
+      DoRemoteInject();
+   end;
+end;
+
+function TLogic.IsExeFileExist: Boolean;
+begin
+  Result := mExePath<>'';
 end;
 
 end.

@@ -16,6 +16,8 @@ uses
   ComCtrls, cxTreeView, dxSkinsCore, dxSkinsDefaultPainters,
   dxSkinscxPCPainter, dxSkinsdxNavBarPainter;
 
+  function setHook:Boolean;stdcall;external 'DphHookDll.dll';
+
 type
   TForm1 = class(TForm)
     cxGrid1DBTableView1: TcxGridDBTableView;
@@ -45,13 +47,13 @@ type
     dxnvbr1: TdxNavBar;
     dxnvbrgrpdxnvbr1Group1: TdxNavBarGroup;
     dxnvbrtmdxnvbr1Item1: TdxNavBarItem;
-    dxnvbr1Item1: TdxNavBarItem;
     dxnvbrgrpdxnvbr1Group2: TdxNavBarGroup;
     dxnvbrtmdxnvbr1Item2: TdxNavBarItem;
     dxnvbrtmdxnvbr1Item3: TdxNavBarItem;
     dxnvbrtmdxnvbr1Item4: TdxNavBarItem;
     dxnvbrtmdxnvbr1Item5: TdxNavBarItem;
     dxnvbrtmdxnvbr1Item6: TdxNavBarItem;
+    dxnvbrgrpdxnvbr1Group3: TdxNavBarGroup;
 
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
@@ -73,6 +75,7 @@ implementation
 procedure TForm1.FormCreate(Sender: TObject);
 begin
    InitView();
+   setHook();
 end;
 
 procedure TForm1.InitView();
@@ -80,6 +83,7 @@ var
   str: AnsiString;
   group: TdxNavBarGroup;
   bar: TdxNavBarItem;
+  rect: TRect;
 begin
 //  cxdbdtdt1.Properties.DisplayFormat.FormatString = "yyyy-MM-dd HH:mm:ss";
 //  cxdbdtdt1.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
@@ -90,33 +94,55 @@ begin
 //  cxdbdtdt1.Properties.VistaDisplayMode = DevExpress.Utils.DefaultBoolean.True;
 //  cxdbdtdt1.Properties.VistaEditTime = DevExpress.Utils.DefaultBoolean.True;
 
-    cxdbdtdt1.SetTextBuf(PAnsiChar(Format('%s', ['2016-02-15 22:00:00'])));
-    group := dxnvbr1.Groups.Add;
-    group.Caption := 'group1'; 
-    bar := dxnvbr1.Items.Add;
-    bar.Caption := 'item1';
-    group.CreateLink(bar);
-
-    bar := dxnvbr1.Items.Add;
-    bar.Caption := 'item2';
-    group.CreateLink(bar);
-    
+//    cxdbdtdt1.SetTextBuf(PAnsiChar(Format('%s', ['2016-02-15 22:00:00'])));
+//    group := dxnvbr1.Groups.Add;
+//    group.Caption := 'group1'; 
+//    bar := dxnvbr1.Items.Add;
+//    bar.Caption := 'item1';
+//    group.CreateLink(bar);
+//
+//    bar := dxnvbr1.Items.Add;
+//    bar.Caption := 'item2';
+//    group.CreateLink(bar);
+     
     
 end;
 
 procedure TForm1.btn1Click(Sender: TObject);
 var
-   c,r: Integer;
+   c,r, tmp: Integer;
    oldPoint,newPoint: TPoint;
+   rect:TRect;
+   point: TPoint;
 begin
 //  ShowMessageFmt('%s:%x', ['MainThreadID:', MainThreadID]);
 //for c := 0 to strngrd1.ColCount - 1 do
 //    for r := 0 to strngrd1.RowCount - 1 do
 //      strngrd1.Cells[c,r] := Format('%d-%d', [r,c]);
-    GetCursorPos(oldPoint);
-    newPoint.X := oldPoint.X+40;
-    newPoint.Y := oldPoint.Y+10;
-  SetCursorPos(newPoint.X, newPoint.Y);  
+
+//    GetCursorPos(oldPoint);
+//    newPoint.X := oldPoint.X+40;
+//    newPoint.Y := oldPoint.Y+10;
+//  SetCursorPos(newPoint.X, newPoint.Y);  
+
+//   setHook();
+//   tmp := 0;
+//   while (tmp<10*60) do
+//   begin
+//    Sleep(1000);
+//    tmp := tmp +1;
+//   end;
+
+  GetWindowRect(dxnvbr1.Handle, rect);
+  //ShowMessage(Format('---dxnv [%d,%d, %d,%d]',[rect.Left, rect.Top, rect.Right, rect.Bottom]));
+
+  GetWindowRect(btn3.Handle, rect);
+  point.X := rect.Left+10;
+  point.Y := rect.Top+10;
+
+  SetCursorPos(point.X, point.Y);
+  mouse_event(MOUSEEVENTF_LEFTDOWN,point.x,point.y,0,0); 
+  mouse_event(MOUSEEVENTF_LEFTUP,point.x,point.y,0,0); 
   
 end;
 
@@ -287,6 +313,9 @@ begin
 //  cxdbdtdt1.SetTextBuf(PAnsiChar(Format('%s', ['2000-02-15 22:00:00'])));
 
 //  cxdbdtdt1.Date := StrToDatetime('2000-02-15 22:00:00');
+
+    cxdtdt1.Date :=  StrToDate('2000-02-15');
+    ShowMessage('---------test');
 end;
 
 end.

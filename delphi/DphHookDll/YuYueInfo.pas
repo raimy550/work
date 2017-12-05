@@ -2,20 +2,9 @@ unit YuYueInfo;
 
 interface
 uses
-  BaseInfo,
-  Windows,
-  Messages,
-  Dialogs,
-  Controls,
-  StdCtrls,
-  Utils,
-  SysUtils,
-  Classes,
-  Contnrs,
-  cxCheckBox,
-  StrMap,
-  StrUtils,
-  uLkJSON;
+  BaseInfo,Windows,Messages,Dialogs,Controls,Utils,SysUtils,Classes,cxGrid,
+  cxCheckBox,StrMap,uLkJSON, cxGridDBTableView,cxGridTableView,cxGridCustomView,
+  cxDBEdit,cxCustomData;
 
   const
     cntYuYueTxt: string = '客户预约';
@@ -25,6 +14,7 @@ type
   private
     procedure HandleDataKehuInfo(h: HWND);
     procedure HandleDataYuYueDanInfo(h: HWND);
+    procedure HandleDataGridView(h:HWND);
     procedure AddDataKehuInfo(h: HWND);
     procedure AddDataYuYueDanInfo(h: HWND);
   protected
@@ -93,15 +83,15 @@ procedure CYuYueInfo.Init;
        Result := True;
        if Utils.ControlTextContains(h, '车辆信息') then
        begin
-          //ShowMessageFmt('%s', ['客户车辆信息---开始']);
           HandleDataKehuInfo(h);
-          //ShowMessageFmt('%s', ['客户车辆信息---结束']);
        end
        else if Utils.ControlTextContains(h, '预约单基本信息')  then
        begin
-         //ShowMessageFmt('%s', ['预约单基本信息---开始']);
-         HandleDataYuYueDanInfo(h);
-         //ShowMessageFmt('%s', ['预约单基本信息---结束']);
+          HandleDataYuYueDanInfo(h);
+       end
+       else if Utils.ClassNameContains(h, 'TcxGrid') then
+       begin
+          HandleDataGridView(h);
        end
        else
         Result := False;
@@ -146,7 +136,6 @@ procedure CYuYueInfo.Init;
         
         if Utils.ControlTextContains(h, '客户/车辆信息') then
          Exit;
-
         AddData(tab, buf); 
       end;
 
@@ -198,7 +187,6 @@ begin
 
    FileName := Utils.GetSaveDir()+Utils.cntSaveYuYueForShowName;
    Utils.SaveData(FileName, s, False);
-   //ShowMessageFmt('%s%s%s', ['信息获取成功,', '保存路径：', FileName]);
 end;
 
 procedure CYuYueInfo.SaveJsonData();
@@ -232,12 +220,10 @@ begin
 
    FileName := Utils.GetSaveDir()+Utils.cntSaveYuYueName;
    TlkJSONstreamed.SaveToFile(jsBase, FileName);
-   //ShowMessageFmt('%s%s%s', ['信息获取成功,', '保存路径：', FileName]);
 end;
 
 function CYuYueInfo.UpdateOp(h: HWND): Boolean;
 begin
-  //WndOp := Utils.FindeWindowBy(h, cntYuYueTxt, cntYuYueCls);
   Result := False;
   if Utils.ClassNameContains(h, cntYuYueCls) and Utils.ControlTextContains(h, cntYuYueTxt) then
   begin
@@ -245,5 +231,73 @@ begin
        Result := True;
   end;
 end;
+
+procedure CYuYueInfo.HandleDataGridView(h: HWND);
+ var
+    twcl: TWinControl;
+    tGrid: TcxGrid;
+    cxGridDBTableView: TcxGridDBTableView;
+    cxView: TcxCustomGridView;
+    i,j, nRowCount,nColCount: Integer;
+    rowInfo: TcxRowInfo;
+    s, s1: string;
+  begin
+      twcl := Utils.GetCtlByClassName(h,'TcxGrid');
+      if (twcl<>nil) then
+      begin
+      tGrid := TcxGrid(twcl);
+      if(tGrid<>nil)  then
+      begin
+         cxView := tGrid.FocusedView;
+         if cxView <> nil then
+           begin
+             nRowCount := cxView.DataController.GetRowCount();
+             nColCount := cxView.DataController.GetItemCount();
+
+             s := '';
+             s1 := '';
+             if nRowCount>0 then
+             begin
+             //字段头
+               for j:=0 to nColCount-1 do
+               begin
+                 cxGridDBTableView := TcxGridDBTableView(cxView); 
+                 s1 := Format('%s', [cxGridDBTableView.Columns[j].Caption]);
+                 if j<>0 then
+                  s1 := #9+s1;
+                  s := Concat(s, s1);
+               end;
+               s := Concat(s, Char(13), Chr(10));
+               SaveData(Utils.GetSaveDir()+Format('%s%d', ['YuYueGrid', mGridCount])+'.txt',s, True);
+               
+             //字段内容
+             s := '';
+             s1 := '';
+             for i := 0 to nRowCount-1 do
+             begin
+             if i<>0 then s := Concat(s, Char(13), Chr(10));
+              for j:=0 to nColCount-1 do
+               begin
+                 s1 := Format('%s', [cxView.DataController.GetDisplayText(i,j)]);
+                 if j<>0 then
+                    s1 := #9+s1;
+                 s := Concat(s, s1);
+               end;
+               if ((0=(i mod 100)) and (i>99)) or (i=nRowCount-1)then
+                 begin
+                    SaveData(Utils.GetSaveDir()+Format('%s%d', ['YuYueGrid', mGridCount])+'.txt',s, True);
+                    s := '';
+                 end;
+             end;
+           end;
+
+           if nRowCount>0 then
+           begin
+              mGridCount := mGridCount+1;
+           end;
+         end;
+      end;
+  end;
+ end;
 
 end.

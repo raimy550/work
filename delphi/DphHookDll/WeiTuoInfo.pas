@@ -2,19 +2,8 @@ unit WeiTuoInfo;
 
 interface
 uses
-  Windows,
-  Messages,
-  Dialogs,
-  Controls,
-  StdCtrls,
-  Utils,
-  SysUtils,
-  Classes,
-  Contnrs,
-  cxCheckBox,
-  StrMap,
-  StrUtils,
-  uLkJSON;
+  Windows,Messages,Dialogs,Controls,Utils,SysUtils,Classes,cxCheckBox,StrMap,
+  StrUtils,uLkJSON;
 
 const
     cntWeiTuoTxt: string = '维修委托书';
@@ -275,7 +264,6 @@ begin
     end
     else
        value := StrPas(@buf1[0]);
-    //ShowMessageFmt('%s--%s',[key,value]);
   end;
 
 
@@ -508,6 +496,11 @@ begin
   end;
 end;
 
+procedure ParseGridData(h: HWND);
+begin
+
+end;
+
 procedure ParseData(h: HWND);
 var
   buf: array[0..255] of Char;
@@ -522,18 +515,20 @@ begin
       nRet := Pos('TPanel', buf);
     if nRet<>0 then
       begin
-        //ShowMessageFmt('%s', ['用户基础数据---开始']);
         ParseWeiXiuUserData(hChild);
-        //ShowMessageFmt('%s', ['用户基础数据---结束']);
       end;
 
 
     nRet := Pos('TcxGroupBox', buf);
     if nRet<>0 then
     begin
-      //ShowMessageFmt('%s', ['预估费用---开始']);
         ParseWeiXiuYuGuData(hChild);
-      //ShowMessageFmt('%s', ['预估费用---结束']);
+    end;
+
+    nRet := Pos('TcxGrid', buf);
+    if nRet<>0 then
+    begin
+        ParseGridData(hChild);
     end;
 
 

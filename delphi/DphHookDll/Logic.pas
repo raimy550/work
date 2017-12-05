@@ -5,32 +5,10 @@ uses
 Windows,
 Messages,
 Dialogs,
-Grids,
-cxGrid,
-//cxExportGrid4Link,
-Controls,
-cxButtons,
-StdCtrls,
-TlHelp32,
-SysUtils,
-cxGridLevel,
-cxGridDBTableView,
-cxGridTableView,
-cxGridCustomView,
-cxDBEdit,
-cxCustomData,
-cxTreeView,
-cxCheckBox,
-dxNavBar,
-dxNavBarCollns,
-ComCtrls,
-Utils,
-DataManager,
-uLkJSON,
-AutoOps,
-MyLog,
-DataTrans,
-TestCase;
+
+cxGrid,Controls,SysUtils,cxGridDBTableView,cxGridTableView,cxGridCustomView,
+cxCheckBox,dxNavBar,dxNavBarCollns,Utils,DataManager,uLkJSON,AutoOps,MyLog,
+DataTrans,TestCase, OpManager;
 
 procedure Init();
 procedure DoProc(nCode,wParam,lParam: DWORD);
@@ -39,6 +17,8 @@ procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
 procedure GetData(hOp: HWND);
 procedure PostData();
 
+procedure DoCatchWindowData();
+
 implementation
 
 var
@@ -46,6 +26,7 @@ var
   strTab: string;
   curProcessID,injectProcessID: Cardinal;
   mCOpsManager: COpsManager;
+  mTOpManager: TOpManager;
   mGridCount: Integer;
   mTestCase: CTestCase;
 
@@ -76,14 +57,16 @@ var
   h: HWND;
   i: Integer;
 begin
+  mTestCase := CTestCase.Create;
   curProcessID:=GetCurrentProcessId();
   injectProcessID:=Utils.GetProcessIDByName(Utils.cntInjectExe);
+  
   if curProcessID<>injectProcessID then
   Exit;
 
   DataManager.Init();
   mCOpsManager := COpsManager.Create;
-  mTestCase := CTestCase.Create;
+  mTOpManager:= TOpManager.Create;
   mGridCount :=0;
 //  GetLoginData();
 //  TestJson();
@@ -102,20 +85,38 @@ end;
 
 procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
 var
-  pEvt: ^EVENTMSG;
-  vKey:Integer;
+  pEvt: PEventMsg;
+  vKey:Cardinal;
 begin
    if curProcessID=injectProcessID  then
    begin
-    pEvt := Pointer(DWord(lParam));
+    //pEvt := Pointer(DWord(lParam));
+      
+     CMyLog.DebugI(Format('wParam = %x, lparaj=%x', [wParam, lParam]));
+     if (wParam=VK_RETURN) and (lParam=$1c0001) then
+     begin
+       CMyLog.DebugI('-----------------VK_RETURN');
+     end;
+//    if wParam=WM_KEYUP  then
+//    begin
+//      CMyLog.DebugI('--------------WM_KEYUP');
+//      pEvt := PEventMsg(lParam);
+//      vKey := LOBYTE(pEvt.message);
+//      CMyLog.DebugI(Format('---vkey = %x', [vKey]));
+//      if vKey=VK_RETURN then
+//      begin
+//         CMyLog.DebugI('-----------------VK_RETURN');
+//      end;
+//    end;
 
-    CMyLog.DebugI(Format('keyProc--msg:%x',[pEvt.message]));
+    
+    //CMyLog.DebugI(Format('keyProc--msg:%x',[pEvt.message]));
   
-    if pEvt.message = WM_KEYDOWN then
-    begin
-       vKey := LOBYTE(pEvt.paramL);
-       CMyLog.DebugI(Format('WM_KEYDOWN--value:%x',[vKey]));
-    end;
+//    if pEvt.message = WM_KEYDOWN then
+//    begin
+//       vKey := LOBYTE(pEvt.paramL);
+//       CMyLog.DebugI(Format('WM_KEYDOWN--value:%x',[vKey]));
+//    end;
    end;
 end;
 
@@ -159,6 +160,7 @@ var
 begin
   if curProcessID=injectProcessID  then
   begin
+ //      Utils.DebugOut(Format('-------WndProc: ncode:%x, wparam=%x, lparam=%x', [nCode, wParam, lParam]));
      if (nCode = HC_ACTION) then
     begin
       pcwp := PCWPStruct(lParam);
@@ -166,34 +168,37 @@ begin
 //      begin
 ////        Utils.LogOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
 ////        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
-////        Utils.DebugOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
-////        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
-//      end;
-      if (pcwp.message=$287) and (pcwp.wParam=$17) then
-      begin
-//        Utils.LogOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
+//        Utils.DebugOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
 //        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
-//        ShowMessageFmt('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
-//        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]);
-//        ShowMessageFmt('%s---%d', ['WM_COMMAND', HWND(pcwp.lParam)]);
-//       DebugOut(Format('%s---%d', ['WM_COMMAND', HWND(pcwp.lParam)]));
-         Utils.DebugOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
-        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
-         bRet:=ClassNameContains(HWND(pcwp.lParam), Utils.cntOpSaveCls);
-         bRet1:=ControlTextContains(HWND(pcwp.lParam), Utils.cntOpSave);
-         if bRet and bRet1 then
-         begin
-          ShowMessageFmt('%s', ['-------click save']);
-          GetData(HWND(pcwp.lParam));                                         
-         // PostData();
-         end;
+//      end;
 
-         bRet1:=ControlTextContains(HWND(pcwp.lParam), Utils.cntOpSure);
-         if bRet and bRet1 then
-         begin
-         GetLoginData();
-         end;
-      end;
+      Utils.DebugOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
+        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
+//      if (pcwp.message=$287) and (pcwp.wParam=$17) then
+//      begin
+////        Utils.LogOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
+////        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
+////        ShowMessageFmt('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
+////        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]);
+////        ShowMessageFmt('%s---%d', ['WM_COMMAND', HWND(pcwp.lParam)]);
+////       DebugOut(Format('%s---%d', ['WM_COMMAND', HWND(pcwp.lParam)]));
+//         Utils.DebugOut(Format('hWnd=%x, wParam=%x, lParam(Msg=%x, Wparam=%x, Lparam=%x)',
+//        [pcwp.hwnd,  wParam, pcwp.message, pcwp.wParam, pcwp.lParam]));
+//         bRet:=ClassNameContains(HWND(pcwp.lParam), Utils.cntOpSaveCls);
+//         bRet1:=ControlTextContains(HWND(pcwp.lParam), Utils.cntOpSave);
+//         if bRet and bRet1 then
+//         begin
+//          ShowMessageFmt('%s', ['-------click save']);
+//          GetData(HWND(pcwp.lParam));                                         
+//         // PostData();
+//         end;
+//
+//         bRet1:=ControlTextContains(HWND(pcwp.lParam), Utils.cntOpSure);
+//         if bRet and bRet1 then
+//         begin
+//         GetLoginData();
+//         end;
+//      end;
     end;
 
   end;
@@ -212,6 +217,11 @@ end;
 procedure PostData();
 begin
   DataManager.PostData();
+end;
+
+procedure DoCatchWindowData();
+begin
+  mTestCase.TestCatchWindowsData();  
 end;
 
 end.

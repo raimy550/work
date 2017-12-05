@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 534
-  Top = 163
-  Width = 1486
+  Left = 280
+  Top = 157
+  Width = 1459
   Height = 719
   Caption = 'Form5'
   Color = clBtnFace
@@ -20,6 +20,7 @@ object Form1: TForm1
     Width = 529
     Height = 457
     TabOrder = 0
+    Visible = False
     object cxGrid1DBTableView1: TcxGridDBTableView
       NavigatorButtons.ConfirmDelete = False
       DataController.DataSource = ds1
@@ -186,21 +187,38 @@ object Form1: TForm1
       Visible = True
       Links = <
         item
-          Item = dxnvbr1Item1
+          Item = dxnvbrtmdxnvbr1Item1
         end
         item
           Item = dxnvbrtmdxnvbr1Item2
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item3
+        end>
+    end
+    object dxnvbrgrpdxnvbr1Group3: TdxNavBarGroup
+      Caption = 'dxnvbrgrpdxnvbr1Group3'
+      LinksUseSmallImages = True
+      SelectedLinkIndex = -1
+      ShowAsIconView = False
+      ShowControl = False
+      TopVisibleLinkIndex = 0
+      UseControl = False
+      UseSmallImages = True
+      Visible = True
+      Links = <
+        item
+          Item = dxnvbrtmdxnvbr1Item1
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item2
+        end
+        item
+          Item = dxnvbrtmdxnvbr1Item3
         end>
     end
     object dxnvbrtmdxnvbr1Item1: TdxNavBarItem
       Caption = 'dxnvbrtmdxnvbr1Item1'
-      Enabled = True
-      LargeImageIndex = -1
-      SmallImageIndex = -1
-      Visible = True
-    end
-    object dxnvbr1Item1: TdxNavBarItem
-      Caption = 'dxnvbr1Item1'
       Enabled = True
       LargeImageIndex = -1
       SmallImageIndex = -1
@@ -248,14 +266,12 @@ object Form1: TForm1
     Top = 256
   end
   object tbl1: TTable
-    Active = True
     DatabaseName = 'DBDEMOS'
     TableName = 'employee.db'
     Left = 152
     Top = 136
   end
   object tbl2: TTable
-    Active = True
     DatabaseName = 'DBDEMOS'
     TableName = 'employee.db'
     Left = 952

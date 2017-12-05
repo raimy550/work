@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 991
-  Top = 249
+  Left = 1034
+  Top = 266
   Width = 674
-  Height = 503
+  Height = 506
   Caption = 'Form1'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
     Top = 392
     Width = 153
     Height = 49
-    Caption = #27880#20837
+    Caption = #36828#31243#27880#20837
     TabOrder = 0
     OnClick = btn1Click
   end
@@ -33,16 +33,16 @@ object Form1: TForm1
     OnClick = btn2Click
   end
   object txt1: TStaticText
-    Left = 160
-    Top = 272
-    Width = 85
+    Left = 128
+    Top = 264
+    Width = 143
     Height = 17
-    Caption = #36873#25321'EXE'#36335#24452#65306
+    Caption = #36873#25321'INFO_DMS.EXE'#36335#24452#65306
     TabOrder = 2
   end
   object btn3: TcxButton
-    Left = 416
-    Top = 280
+    Left = 432
+    Top = 264
     Width = 41
     Height = 17
     Caption = '...'
@@ -56,8 +56,8 @@ object Form1: TForm1
     OnClick = btn3Click
   end
   object btn4: TcxButton
-    Left = 232
-    Top = 320
+    Left = 240
+    Top = 304
     Width = 161
     Height = 49
     Caption = #24320#22987
@@ -66,9 +66,23 @@ object Form1: TForm1
   end
   object cxtxtdt1: TcxTextEdit
     Left = 264
-    Top = 272
+    Top = 264
     TabOrder = 5
-    Text = 'cxtxtdt1'
-    Width = 121
+    Width = 161
+  end
+  object btn5: TcxButton
+    Left = 40
+    Top = 32
+    Width = 75
+    Height = 25
+    Caption = #33719#21462#23631#24149#25511#20214
+    TabOrder = 6
+    OnClick = btn5Click
+  end
+  object mTmrMonitor: TTimer
+    Interval = 60000
+    OnTimer = mTmrMonitorTimer
+    Left = 56
+    Top = 120
   end
 end

@@ -90,7 +90,6 @@ begin
         nRet :=  Pos('本次维修', buf);
         if (nRet<>0) and (mCurInfoType=InfoType_WeiTuo) then
         begin
-          //ShowMessageFmt('%s', ['-------本次维修']);
           Result := DoWindowsWeiXiu(h);
           Exit;
         end;
@@ -179,6 +178,14 @@ begin
   DataTrans.HttpPost(Utils.cntUrl, ws);
 end;
 
+
+{-------------------------------------------------------------------------------
+  过程名:    DoUpdateOps, 更新操作页面的操作按钮，用以判断当前点击操作的页面
+  作者:      raimy
+  日期:      2017.11.28
+  参数:      h: HWND
+  返回值:    Boolean
+-------------------------------------------------------------------------------}
 function DoUpdateOps(h: HWND): Boolean;
 var
   tcl: TWinControl;

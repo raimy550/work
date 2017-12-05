@@ -5,7 +5,7 @@ interface
 uses Windows, SysUtils, Classes, Variants, Controls, cxTextEdit, Utils;
 // class COpsManager
 type
-  AutoOpType=(AutoOpType_None, AutoOpType_Export);
+  AutoOpType=(AutoOpType_None, AutoOpType_Export, AutoOpType_SearchClient);
   OpProcess=(OpExport_Login, OpExport_Select, OpExport_Export, OpExport_Sucess);
 type
   COpsManager = class(TObject)
@@ -28,6 +28,7 @@ type
   protected
   procedure Execute;override;
   procedure DoOpsTypeExport;
+  procedure DoOpsTypeSearchClient;
   procedure DoProcessLogin;
   procedure DoProcessSelect;
 
@@ -42,8 +43,11 @@ implementation
      while not Terminated do
      begin
         if mAutoOpType=AutoOpType_Export then
-          DoOpsTypeExport;
-         Utils.DebugOut('----------Execute');
+          DoOpsTypeExport
+        else if mAutoOpType=AutoOpType_SearchClient then
+          DoOpsTypeSearchClient;
+        
+         Utils.DebugOut('---------- Thread Execute');
         Sleep(500);
      end;
    end;
@@ -67,6 +71,19 @@ implementation
      end;
    end;
 
+   procedure CThreadOps.DoOpsTypeSearchClient;
+   var 
+     nRet: Integer;
+   begin
+     if mCurOpProcess=OpExport_Login then
+     begin
+       nRet := Utils.WaitOpTimeOut(Utils.cntInjetWind, 1000*60*3);
+      if nRet=0 then
+        ExitThread(0);
+
+     end
+   end;
+   
    procedure  CThreadOps.DoProcessLogin;
    var
      hParent, hTarget: HWND;

@@ -9,6 +9,7 @@ uses
   ExtCtrls, dxNavBar;
 
    function setHook:Boolean;stdcall;external 'DphHookDll.dll';
+   //procedure catchWindowData;stdcall;external 'DphHookDll.dll';
 
 type
   TForm1 = class(TForm)
@@ -18,13 +19,18 @@ type
     btn3: TcxButton;
     btn4: TcxButton;
     cxtxtdt1: TcxTextEdit;
+    btn5: TcxButton;
+    mTmrMonitor: TTimer;
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure btn4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btn5Click(Sender: TObject);
+    procedure mTmrMonitorTimer(Sender: TObject);
   private
     { Private declarations }
+    mLogic:TLogic;
   public
     { Public declarations }
   end;
@@ -39,13 +45,14 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Application.ShowMainForm := True;
-  setHook();
+  mLogic := TLogic.Create;
+  //Application.ShowMainForm := not mLogic.IsExeFileExist();
+  //setHook();
 end;
 
 procedure TForm1.btn1Click(Sender: TObject);
 begin
-  Logic.DoStart();
+  mLogic.DoRemoteInject();
 end;
 
 procedure TForm1.btn2Click(Sender: TObject);
@@ -78,7 +85,26 @@ procedure TForm1.btn4Click(Sender: TObject);
 var
   bRet:  Boolean;
 begin
-  bRet := setHook();
+//  bRet := setHook();
+  if FileExists(cxtxtdt1.Text)=False then
+    ShowMessageFmt('%s文件不存在，请重新选择', [cxtxtdt1.Text])
+  else
+  begin
+    mLogic.DoStart(cxtxtdt1.Text);
+    Application.MainForm.Hide;
+  end;
+    
+end;
+
+procedure TForm1.btn5Click(Sender: TObject);
+begin
+//  catchWindowData();
+end;
+procedure TForm1.mTmrMonitorTimer(Sender: TObject);
+begin
+  //mTmrAutoOp.Enabled := False;
+  mTmrMonitor.Interval := Utils.cntTimerIntervalRun;
+  mLogic.DoTimerMonitor();
 end;
 
 end.

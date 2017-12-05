@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AppLoader", "AppLoader\AppLoader.vcproj", "{F0561692-795D-4217-902D-7DFC158A403F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0561692-795D-4217-902D-7DFC158A403F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F0561692-795D-4217-902D-7DFC158A403F}.Debug|Win32.Build.0 = Debug|Win32
+		{F0561692-795D-4217-902D-7DFC158A403F}.Release|Win32.ActiveCfg = Release|Win32
+		{F0561692-795D-4217-902D-7DFC158A403F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

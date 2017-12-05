@@ -178,6 +178,14 @@ begin
   DataTrans.HttpPost(Utils.cntUrl, ws);
 end;
 
+
+{-------------------------------------------------------------------------------
+  过程名:    DoUpdateOps, 更新操作页面的操作按钮，用以判断当前点击操作的页面
+  作者:      raimy
+  日期:      2017.11.28
+  参数:      h: HWND
+  返回值:    Boolean
+-------------------------------------------------------------------------------}
 function DoUpdateOps(h: HWND): Boolean;
 var
   tcl: TWinControl;
@@ -227,6 +235,14 @@ begin
     Result := InfoType_None;
 end;
 
+
+{-------------------------------------------------------------------------------
+  过程名:    UpdateCurInfoType, 更新获取当前页面的类型，以确定当前操作页面
+  作者:      raimy
+  日期:      2017.11.28
+  参数:      hContainer: HWND; hInfoOp: HWND
+  返回值:    无
+-------------------------------------------------------------------------------}
 procedure UpdateCurInfoType(hContainer: HWND; hInfoOp: HWND);
 begin
     UpdateOps(hContainer);

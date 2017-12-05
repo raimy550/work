@@ -94,7 +94,7 @@ OutputDir=C:\Users\raimy\Desktop\hookdemo
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=
+SearchPath=$(DELPHI)\Lib\Debug;
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;dxCoreD7;dxGDIPlusD7;cxLibraryVCLD7;cxEditorsVCLD7;dxThemeD7;cxDataD7;cxExtEditorsVCLD7;dxEdtrD7;dxELibD7;dxDockingD7;dxComnD7;dxsbD7;dxBarD7;dxBarDBNavD7;cxBarEditItemD7;dxBarExtDBItemsD7;dxBarExtItemsD7;dxRibbonD7;dxNavBarD7;dxLayoutControlD7;dxLayoutControlcxEditAdaptersD7;dxLayoutControldxEditAdaptersD7;cxSpreadSheetVCLD7;EQTLD7;ECQDBCD7;EQDBTLD7;cxTreeListVCLD7;EQGridD7;dxGrEdD7;dxExELD7;cxPageControlVCLD7;cxGridD7;cxVerticalGridVCLD7;dxFlowChartD7;cxSchedulerD7;cxSchedulerGridD7;dxorgcD7;dxdborD7;dxMasterViewD7;cxWebD7;cxWebPascalScriptD7;cxWebSnapD7;cxWebTeeChartD7;dxmdsD7;dxdbtrD7;dxtrmdD7;dxPSCoreD7;dxPSLnksD7;dxPScxCommonD7;dxPScxExtCommonD7;dxPScxPCProdD7;dxPScxSSLnkD7;dxPScxTLLnkD7;dxPScxVGridLnkD7;dxPSTeeChartD7;dxPSDBTeeChartD7;dxPSdxDBTVLnkD7;dxPSdxFCLnkD7;dxPSdxLCLnkD7;dxPSdxMVLnkD7;dxPSdxOCLnkD7;dxPSdxDBOCLnkD7;dxPsPrVwAdvD7;dxPSTLLnkD7;dxPSdxDBTLLnkD7;dxPSdxDBCtrlLnkD7;dxPSdxInsLnkD7;dxInsD7;dxPSdxOILnkD7;dxObjInsD7;dxPSdxDBGrLnkD7;dxPScxGrid6LnkD7;cxPivotGridD7;cxPivotGridChartD7;cxPivotGridOLAPD7;dxDBEdD7;dxExRwD7;dcldxSkinsCoreD7;dxSkinsCoreD7;dxSkinscxPCPainterD7;dxSkinsdxLCPainterD7;dxSkinscxScheduler3PainterD7;dxSkinsdxNavBar2PainterD7;dxSkinsdxDLPainterD7;dxSkinsdxRibbonPainterD7;dxSkinsdxBarPainterD7;dxSkinBlackD7;dxSkinBlueD7;dxSkinSilverD7;dxSkinStardustD7;dxSkinValentineD7;dxSkinXmas2008BlueD7;dxSkinCaramelD7;dxSkinDarkSideD7;dxSkinPumpkinD7;dxSkinCoffeeD7;dxSkinGlassOceansD7;dxSkiniMaginaryD7;dxSkinMcSkinD7;dxSkinLilianD7;dxSkinLiquidSkyD7;dxSkinLondonLiquidSkyD7;dxSkinMoneyTwinsD7;dxSkinOffice2007BlackD7;dxSkinOffice2007BlueD7;dxSkinOffice2007GreenD7;dxSkinOffice2007PinkD7;dxSkinOffice2007SilverD7;dxSkinSummer2008D7;dxSpellCheckerD7
 Conditionals=
 DebugSourceDirs=
@@ -134,9 +134,15 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+[Excluded Packages]
+D:\Delphi\DevExpress\Lib\dclcxPivotGridD7.bpl=ExpressPivotGrid (VCL Edition) by Developer Express Inc.
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=2
+Item0=$(DELPHI)\Lib\Debug;
+Item1=$(DELPHI)\Lib\Debug;E:\Study\gitwork\delphi\DphHookDll\utils
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=C:\Users\raimy\Desktop\hookdemo

@@ -1,0 +1,71 @@
+unit MyLog;
+
+interface
+uses
+Windows,
+Messages,
+Dialogs,
+
+cxGrid,
+Controls,
+
+
+
+SysUtils,
+
+
+
+Classes,
+Utils;
+
+var
+  gBDebugE, gBDebugI, gBDebugMsg, gBDebugSave: Boolean;
+const
+  cntLogName: string = 'log.txt';
+
+type
+  CMyLog = class(TObject)
+  
+  public
+  class procedure DebugE(str: string);
+  class procedure DebugI(str: string);
+  class procedure SaveLog(str: string);
+  class procedure DebugMsg(str: string);
+end;
+
+implementation
+
+class procedure CMyLog.DebugE(str: string);
+begin
+  if gBDebugE then
+    OutputDebugString(PAnsiChar(str));
+end;
+
+class procedure CMyLog.DebugI(str: string);
+begin
+  if gBDebugI then
+    OutputDebugString(PAnsiChar(str));
+end;
+
+class procedure CMyLog.SaveLog(str: string);
+begin
+  if gBDebugSave then
+  begin
+    str := Concat(str, Char(13), Chr(10));
+    Utils.SaveData(Utils.GetSaveDir+cntLogName, str, True);
+  end;
+
+end;
+
+class procedure CMyLog.DebugMsg(str: string);
+begin
+  if gBDebugMsg then
+      ShowMessageFmt('%s', [str]);
+end;
+
+initialization
+ gBDebugE:=True;
+ gBDebugI:=True;
+ gBDebugMsg:=True;
+ gBDebugSave:=True;
+end.

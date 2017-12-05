@@ -17,17 +17,27 @@ uses
   Messages,
   Classes,
   Logic in 'Logic.pas',
-  Utils in 'Utils.pas',
-  StrMap in 'StrMap.pas',
+  Utils in 'utils\Utils.pas',
+  StrMap in 'utils\StrMap.pas',
+  MyLog in 'utils\MyLog.pas',
   DataTrans in 'DataTrans.pas',
   YuYueInfo in 'YuYueInfo.pas',
+  WeiTuoInfo in 'WeiTuoInfo.pas',
+  LoginInfo in 'LoginInfo.pas',
   AutoOps in 'AutoOps.pas',
-  MyLog in 'MyLog.pas',
-  TestCase in 'TestCase.pas';
+  TestCase in 'TestCase.pas',
+  ConfigManager in 'ConfigManager.pas',
+  OpBases in 'Ops\OpBases.pas',
+  OpManager in 'Ops\OpManager.pas',
+  OpSteps in 'Ops\OpSteps.pas',
+  OpTypes in 'Ops\OpTypes.pas',
+  uLkJSON in 'utils\uLkJSON.pas',
+  BaseInfo in 'BaseInfo.pas',
+  DataManager in 'DataManager.pas';
 
 {$R *.res}
 var
-  hHook1, hHookKey:HHOOK;
+  hHookMouse, hHookKey, hHookWndProc:HHOOK;
 
 function DllInit():Integer; stdcall;
 begin
@@ -38,39 +48,44 @@ end;
 function hookProc(nCode,wParam,lParam: DWORD):DWORD;stdcall;
 begin
   DoProc(nCode, wParam, lParam);
-  Result:=CallNextHookEx(hHook1,nCode,wParam,lParam);
+  Result:=CallNextHookEx(hHookWndProc,nCode,wParam,lParam);
 
 end;
 
 function mouseProc(nCode: Integer; wParam: WPARAM;lParam: LPARAM):DWORD;stdcall;
 begin
   DoProcMouse(nCode, wParam, lParam);
-  Result:=CallNextHookEx(hHook1,nCode,wParam,lParam);
+  Result:=CallNextHookEx(hHookMouse,nCode,wParam,lParam);
 
 end;
-
+           
 function keyProc(nCode: Integer; wParam: WPARAM;lParam: LPARAM):DWORD;stdcall;
 begin
+
   DoProcKey(nCode, wParam, lParam);
-  Result:=CallNextHookEx(hHook1,nCode,wParam,lParam);
+  Result:=CallNextHookEx(hHookKey,nCode,wParam,lParam);
 
 end;
 
 function setHook():Boolean;stdcall;
 begin
-//  hHook1:=SetWindowsHookEx(WH_CALLWNDPROC,@hookProc,HInstance,0);
-  hHook1:=SetWindowsHookEx(WH_MOUSE,@mouseProc,HInstance,0);
+  //hHookWndProc:=SetWindowsHookEx(WH_CALLWNDPROC,@hookProc,HInstance,0);
+  hHookMouse:=SetWindowsHookEx(WH_MOUSE,@mouseProc,HInstance,0);
   hHookKey := SetWindowsHookEx(WH_KEYBOARD,@keyProc,HInstance,0);
-  Result:= (hHook1<>0) and (hHookKey<>0);
+  Result:= (hHookMouse<>0) and (hHookKey<>0) and (hHookWndProc<>0);
 end;
 
 //É¾³ý¹³×Ó
 function delHook:Boolean;stdcall;
 begin
-  Result:=UnhookWindowsHookEx(hHook1) and UnhookWindowsHookEx(hHookKey);
+  Result:=UnhookWindowsHookEx(hHookMouse) and UnhookWindowsHookEx(hHookKey) and UnhookWindowsHookEx(hHookWndProc);
 end;
 
 
+procedure catchWindowData();
+begin
+  DoCatchWindowData();
+end;
 
 
 procedure DLLEntryPoint(Reason:Integer);
@@ -79,9 +94,9 @@ procedure DLLEntryPoint(Reason:Integer);
     case Reason of
       DLL_PROCESS_ATTACH:
       begin
-      Init();
-      OutputDebugString('---------DLL_PROCESS_ATTACH');
-      //ShowMessageFmt('%s%s', ['----', 'DLL_PROCESS_ATTACH']);
+      Logic.Init();
+      //OutputDebugString('---------DLL_PROCESS_ATTACH');
+      //ShowMessageFmt('-----------%s', ['DLL_PROCESS_ATTACH']);
       end;
 
       DLL_PROCESS_DETACH:
@@ -95,7 +110,8 @@ procedure DLLEntryPoint(Reason:Integer);
   exports
     DllInit,
     setHook,
-    hookProc;
+    hookProc,
+    catchWindowData;
 begin
     DllProc := @DLLEntryPoint;
     DLLEntryPoint(DLL_PROCESS_ATTACH);
