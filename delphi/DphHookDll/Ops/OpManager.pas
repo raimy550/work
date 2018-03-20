@@ -18,7 +18,7 @@ TOpMonitorThread = class;
     function IsLogin():Boolean;
     procedure SetLogin(bLogin:boolean);
    private 
-     procedure DoCommLoginOp();
+     function DoCommLoginOp():Boolean;
    private
      mOpType: TOpTypeBase;
      mConfigManager: TConfigManager;
@@ -71,9 +71,13 @@ begin
 
 
   opList:=mConfigManager.GetConfigOps();
+  
+  //CMyLog.DebugMsg(Format('list size = %d', [opList.Count]));
+  
   for i:=0 to opList.Count-1 do
   begin
      stOp := TOpStruct(opList.Items[i]);
+     //CMyLog.DebugMsg(Format('TOpManagerStartOps--index %d, opName=%s', [i, stOp.opName]));
      StartOp(stOp);
   end;
 end;
@@ -85,8 +89,17 @@ begin
    if opSt.opDate < Date()-1 then
    begin
      //TOpThread.Create(opSt);
+
+     //CMyLog.DebugMsg(Format('------------StartOp, name=%s', [opSt.opName]));
      if opSt.opName='SearchClient' then
-     mOpType:=TOpTypeSearchClient.Create(TOpStepSearchClient.Create, opSt);
+      mOpType:=TOpTypeSearchClient.Create(TOpStepSearchClient.Create, opSt)
+     else if opSt.opName='SearchStateMent' then
+      mOpType:=TOpTypeSearchStateMent.Create(TOpStepSearchStateMent.Create, opSt)
+     else if opSt.opName='SearchCarAndOwerInfo' then
+      mOpType:=TOpTypeSearchCarAndOwerInfo.Create(TOpStepSearchCarAndOwerInfo.Create, opSt) 
+     else if opSt.opName='SearchMembership' then
+      mOpType:=TOpTypeSearchMembership.Create(TOpStepSearchMembership.Create,opSt); 
+         
      
      bRet := mOpType.DoStep();
      if bRet then
@@ -118,19 +131,21 @@ begin
  mLogin:=bLogin;
 end;
 
-procedure TOpManager.DoCommLoginOp;
-var
-  h, hTarget:HWND;
+function TOpManager.DoCommLoginOp:Boolean;
+var            
+  h, hTarget, hForeground:HWND;
   pswEdit, codeEdit: TcxTextEdit;
   companyEdit: TcxLookupComboBox;
   nRet:Cardinal;
 begin
+  Result:=mLogin;
    if mLogin=False then
    begin
      h:=FindWindow(nil, PAnsiChar(Utils.cntInjetWind));
      if h<>0 then
      begin
        mLogin := True;
+       Result:=True;
        Exit;
      end;
 
@@ -164,11 +179,27 @@ begin
 
       h := Utils.WaitForWindow(Utils.cntInjetWind, Utils.cntWaitWndTime, 1000);
       if h<>0 then
-       nRet := WaitOpTimeOut(Utils.cntInjetWind, Utils.cntWaitWndTime);
-       if nRet <> 0 then
-          mLogin :=  True;
-     end;
-      
+      begin
+       Windows.BringWindowToTop(h);
+       hForeground := Windows.GetForegroundWindow();
+
+        while h<>hForeground  do
+        begin
+           hForeground := Windows.GetForegroundWindow();
+           Sleep(1000);
+        end;
+        Windows.SetFocus(h); 
+        mLogin :=  True;
+        Result:=True;
+      end;
+        
+      end;
+//      if h<>0 then
+//       nRet := WaitOpTimeOut(Utils.cntInjetWind, Utils.cntWaitWndTime);
+//       if nRet <> 0 then
+//          Sleep(1*60*1000);
+//          mLogin :=  True;
+//     end;
    end;
 end;
 
@@ -182,19 +213,19 @@ begin
 end;
 
 procedure TOpMonitorThread.Execute;
-var
-  curTime: TDateTime ;
-  Hour, Min, Sec, MSec:Word; 
 begin
   FreeOnTerminate := True;
-  curTime := Now;
-  DecodeTime(curTime, Hour, Min, Sec, MSec); 
  
   while not terminated do
   begin
-    if Hour>=Utils.cntAutoOpTime then
+    if Utils.IsInAutoOpTime=True then
     begin
      mOpManager.StartOps;
+    end
+    else
+    begin
+      if mOpManager.DoCommLoginOp=False then
+        CMyLog.DebugMsg('----Login fail!');
     end;
     
     Sleep(Utils.cntTimerIntervalAutoOp);  

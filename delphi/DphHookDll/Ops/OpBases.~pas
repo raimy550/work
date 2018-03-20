@@ -35,9 +35,9 @@ TOpStepBase = class;
 {TOpTypeBase} 
 TOpTypeBase = class(TObject)
   protected
-    procedure ChangeStep(opStep: TOpStepBase);
     procedure SetResultType(opResult: OpResultType);
   public
+    procedure ChangeStep(opStep: TOpStepBase);
     function DoStep():Boolean;
     function GetOpDate(): TDateTime;
     function GetSaveDateBegin(): TDateTime;
@@ -57,12 +57,15 @@ end;
 TOpStepBase = class(TObject)
   public
     function DoAction(tOpType: TOpTypeBase): Boolean;
+    constructor Create();
   protected
     function ActionImp(tOpType: TOpTypeBase): Boolean;virtual;abstract;
+    procedure InitInner();virtual;
     
   protected
     stepName : string;
     wndCaption, wndClassName: string;
+    mSveFileName: string;
 end;
 
 
@@ -122,6 +125,11 @@ end;
 //==============================================================================
 // TOpStepBase
 //==============================================================================
+constructor TOpStepBase.Create;
+begin
+   InitInner;
+end;
+
 function TOpStepBase.DoAction(tOpType: TOpTypeBase): Boolean;
 begin
   Result := ActionImp(tOpType);
@@ -132,5 +140,10 @@ begin
 end;
 
 
+
+procedure TOpStepBase.InitInner;
+begin
+
+end;
 
 end.

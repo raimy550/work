@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 1034
-  Top = 266
+  Left = 700
+  Top = 240
   Width = 674
   Height = 506
   Caption = 'Form1'
@@ -80,7 +80,7 @@ object Form1: TForm1
     OnClick = btn5Click
   end
   object mTmrMonitor: TTimer
-    Interval = 60000
+    Interval = 6000
     OnTimer = mTmrMonitorTimer
     Left = 56
     Top = 120

@@ -11,11 +11,7 @@ library DphHookDll;
   using PChar or ShortString parameters. }
 
 uses
-  Windows,
-  Dialogs,
-  SysUtils,
-  Messages,
-  Classes,
+  Windows,Dialogs,SysUtils,Messages,Classes,
   Logic in 'Logic.pas',
   Utils in 'utils\Utils.pas',
   StrMap in 'utils\StrMap.pas',
@@ -33,11 +29,13 @@ uses
   OpTypes in 'Ops\OpTypes.pas',
   uLkJSON in 'utils\uLkJSON.pas',
   BaseInfo in 'BaseInfo.pas',
-  DataManager in 'DataManager.pas';
+  DataManager in 'DataManager.pas',
+  WeiXiuWeiTuoInfo in 'WeiXiuWeiTuoInfo.pas';
 
 {$R *.res}
 var
   hHookMouse, hHookKey, hHookWndProc:HHOOK;
+  gLogic:TLogic;
 
 function DllInit():Integer; stdcall;
 begin
@@ -47,14 +45,14 @@ end;
 
 function hookProc(nCode,wParam,lParam: DWORD):DWORD;stdcall;
 begin
-  DoProc(nCode, wParam, lParam);
+  gLogic.DoProc(nCode, wParam, lParam);
   Result:=CallNextHookEx(hHookWndProc,nCode,wParam,lParam);
 
 end;
 
 function mouseProc(nCode: Integer; wParam: WPARAM;lParam: LPARAM):DWORD;stdcall;
 begin
-  DoProcMouse(nCode, wParam, lParam);
+  gLogic.DoProcMouse(nCode, wParam, lParam);
   Result:=CallNextHookEx(hHookMouse,nCode,wParam,lParam);
 
 end;
@@ -62,7 +60,7 @@ end;
 function keyProc(nCode: Integer; wParam: WPARAM;lParam: LPARAM):DWORD;stdcall;
 begin
 
-  DoProcKey(nCode, wParam, lParam);
+  gLogic.DoProcKey(nCode, wParam, lParam);
   Result:=CallNextHookEx(hHookKey,nCode,wParam,lParam);
 
 end;
@@ -84,17 +82,17 @@ end;
 
 procedure catchWindowData();
 begin
-  DoCatchWindowData();
+  gLogic.DoCatchWindowData();
 end;
 
 
 procedure DLLEntryPoint(Reason:Integer);
-
   begin
     case Reason of
       DLL_PROCESS_ATTACH:
       begin
-      Logic.Init();
+      gLogic := TLogic.Create;
+      gLogic.Init();
       //OutputDebugString('---------DLL_PROCESS_ATTACH');
       //ShowMessageFmt('-----------%s', ['DLL_PROCESS_ATTACH']);
       end;
@@ -106,13 +104,21 @@ procedure DLLEntryPoint(Reason:Integer);
       DLL_THREAD_DETACH:;
     end;
   end;
-
+  
   exports
     DllInit,
     setHook,
     hookProc,
     catchWindowData;
+      
 begin
     DllProc := @DLLEntryPoint;
     DLLEntryPoint(DLL_PROCESS_ATTACH);
 end.
+
+
+
+
+
+
+

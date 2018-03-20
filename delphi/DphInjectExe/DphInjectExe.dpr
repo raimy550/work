@@ -7,7 +7,10 @@ uses
   MyLog in '..\DphHookDll\utils\MyLog.pas',
   StrMap in '..\DphHookDll\utils\StrMap.pas',
   uLkJSON in '..\DphHookDll\utils\uLkJSON.pas',
-  Utils in '..\DphHookDll\utils\Utils.pas';
+  Utils in '..\DphHookDll\utils\Utils.pas',
+  Logic in 'Logic.pas',
+  ConfigManager in '..\DphHookDll\ConfigManager.pas',
+  OpBases in '..\DphHookDll\Ops\OpBases.pas';
 
 {$R *.res}
 

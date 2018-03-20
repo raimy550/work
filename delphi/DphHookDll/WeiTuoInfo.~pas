@@ -497,6 +497,9 @@ begin
 end;
 
 procedure ParseGridData(h: HWND);
+begin
+
+end;
 
 procedure ParseData(h: HWND);
 var

@@ -2,57 +2,48 @@ unit Logic;
 
 interface
 uses
-Windows,
-Messages,
-Dialogs,
-
+Windows,Messages,Dialogs,
 cxGrid,Controls,SysUtils,cxGridDBTableView,cxGridTableView,cxGridCustomView,
 cxCheckBox,dxNavBar,dxNavBarCollns,Utils,DataManager,uLkJSON,AutoOps,MyLog,
 DataTrans,TestCase, OpManager;
+type
+{ TLogic }
 
-procedure Init();
-procedure DoProc(nCode,wParam,lParam: DWORD);
-procedure DoProcMouse(nCode: Integer; wParam:Integer; lParam: LongInt);
-procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
-procedure GetData(hOp: HWND);
-procedure PostData();
+  TLogic = class(TObject)
+  private
+    roopCount: Integer;
+    strTab: string;
+    curProcessID,injectProcessID: Cardinal;
+    mCOpsManager: COpsManager;
+    mTOpManager: TOpManager;
+    mGridCount: Integer;
+    mTestCase: CTestCase;
+    mDataManager: TDataManager;
+  public
+    procedure GetLoginData;
+    procedure Init();
+    procedure DoProc(nCode,wParam,lParam: DWORD);
+    procedure DoProcMouse(nCode: Integer; wParam:Integer; lParam: LongInt);
+    procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
+    procedure GetData(hOp: HWND);
+    procedure PostData();
+    procedure DoCatchWindowData();
 
-procedure DoCatchWindowData();
+  end;
 
 implementation
-
-var
-  roopCount: Integer;
-  strTab: string;
-  curProcessID,injectProcessID: Cardinal;
-  mCOpsManager: COpsManager;
-  mTOpManager: TOpManager;
-  mGridCount: Integer;
-  mTestCase: CTestCase;
+  
 
 
-procedure TestJson();
-var
-  jsBase, js:TlkJSONobject;
-  xs:TlkJSONbase;
-  i,j,k,l: Integer;
-  ws, FileName: String;
-begin
-  FileName:=ExtractFilePath(ParamStr(0))+Utils.cntSaveWeiXiuForShowName;
-  xs := TlkJSONstreamed.LoadFromFile(FileName);
-  ws := TlkJSON.GenerateText(xs);
-  DataTrans.HttpPost(Utils.cntUrl, ws);
-end;
-
-procedure GetLoginData();
+procedure TLogic.GetLoginData();
 var
   h:HWND;
 begin
   h := FindWindow(nil,PAnsiChar(Utils.cntLoginWind));
-  DataManager.GetLoginData(h);
+  mDataManager.GetLoginData(h);
 end;
 
-procedure Init();
+procedure TLogic.Init();
 var
   h: HWND;
   i: Integer;
@@ -64,7 +55,7 @@ begin
   if curProcessID<>injectProcessID then
   Exit;
 
-  DataManager.Init();
+  mDataManager:=TDataManager.Create;
   mCOpsManager := COpsManager.Create;
   mTOpManager:= TOpManager.Create;
   mGridCount :=0;
@@ -83,44 +74,22 @@ begin
 
 end;
 
-procedure DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
+procedure TLogic.DoProcKey(nCode: Integer; wParam:Integer; lParam: LongInt);
 var
   pEvt: PEventMsg;
   vKey:Cardinal;
 begin
    if curProcessID=injectProcessID  then
    begin
-    //pEvt := Pointer(DWord(lParam));
-      
      CMyLog.DebugI(Format('wParam = %x, lparaj=%x', [wParam, lParam]));
      if (wParam=VK_RETURN) and (lParam=$1c0001) then
      begin
        CMyLog.DebugI('-----------------VK_RETURN');
      end;
-//    if wParam=WM_KEYUP  then
-//    begin
-//      CMyLog.DebugI('--------------WM_KEYUP');
-//      pEvt := PEventMsg(lParam);
-//      vKey := LOBYTE(pEvt.message);
-//      CMyLog.DebugI(Format('---vkey = %x', [vKey]));
-//      if vKey=VK_RETURN then
-//      begin
-//         CMyLog.DebugI('-----------------VK_RETURN');
-//      end;
-//    end;
-
-    
-    //CMyLog.DebugI(Format('keyProc--msg:%x',[pEvt.message]));
-  
-//    if pEvt.message = WM_KEYDOWN then
-//    begin
-//       vKey := LOBYTE(pEvt.paramL);
-//       CMyLog.DebugI(Format('WM_KEYDOWN--value:%x',[vKey]));
-//    end;
    end;
 end;
 
-procedure DoProcMouse(nCode: Integer;wParam:WPARAM; lParam: LPARAM);
+procedure TLogic.DoProcMouse(nCode: Integer;wParam:WPARAM; lParam: LPARAM);
 var
   p: PMouseHookStruct;
   bRet, bRet1: Boolean;
@@ -128,23 +97,19 @@ begin
    if curProcessID=injectProcessID  then
    begin
       p := PMouseHookStruct(lParam);
-      //DebugOut(Format('code=%x, wParam=%x, lParam(hWnd=%x, x=%d, y=%d)', [nCode, wParam, p.hwnd, p.pt.X, p.pt.Y]));
-      //ShowMessageFmt('%s', ['---------DoProcMouse']);
       if wParam=WM_LBUTTONUP then
       begin
        bRet:=ClassNameContains(p.hwnd, Utils.cntOpSaveCls);
        bRet1:=ControlTextContains(p.hwnd, Utils.cntOpSave);
        if bRet and bRet1 then
        begin
-        ShowMessageFmt('%s', ['-------click save']);
+        //ShowMessageFmt('%s', ['-------click save']);
         GetData(p.hwnd);
-       // PostData();
        end;
 
        bRet1:=ControlTextContains(p.hwnd, Utils.cntOpSure);
        if bRet and bRet1 then
        begin
-         //ShowMessageFmt('%s', ['---------WM_LBUTTONUP']);
          GetLoginData();
        end;
       end;
@@ -152,7 +117,7 @@ begin
 
 end;
 
-procedure DoProc(nCode,wParam,lParam: DWORD);
+procedure TLogic.DoProc(nCode,wParam,lParam: DWORD);
 var
   bRet, bRet1: Boolean;
   pcwp:PCWPStruct;
@@ -204,24 +169,25 @@ begin
   end;
 end;
 
-procedure GetData(hOp: HWND);
+procedure TLogic.GetData(hOp: HWND);
 var
   h:HWND;
 begin
   h := FindWindow(nil,PAnsiChar(Utils.cntInjetWind));
-  DataManager.UpdateCurInfoType(h, hOp);
-  DataManager.CleanData();
-  DataManager.GetWindowsData(h);
+  mDataManager.UpdateCurInfoType(h, hOp);
+  mDataManager.CleanData();
+  mDataManager.GetWindowsData(h);
 end;
 
-procedure PostData();
+procedure TLogic.PostData();
 begin
-  DataManager.PostData();
+  mDataManager.PostData();
 end;
 
-procedure DoCatchWindowData();
+procedure TLogic.DoCatchWindowData();
 begin
   mTestCase.TestCatchWindowsData();  
 end;
 
 end.
+

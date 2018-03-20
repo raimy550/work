@@ -33,6 +33,7 @@ type
     procedure WriteConfig(setion,ident,value:string);
     procedure UpdateAutoOps();
     procedure UpdateLoginInfo();
+    function  IsAllOpsOperatedAccordDate(date:TDateTime): Boolean;
   private
     procedure Init;
     procedure InitAutoOps();
@@ -106,7 +107,7 @@ begin
     mOpList.Clear;
     i:=0;
     strRet := mInitFile.ReadString(Format('AutoOp%d', [i]), cntIdentOpName, '');
-    stOp := TOpStruct.Create;
+ //   stOp := TOpStruct.Create;
     
     while strRet <> '' do
     begin
@@ -117,6 +118,7 @@ begin
       stOp.opDate := StrToDate(tmp);
       
       mOpList.Add(stOp);
+     // CMyLog.DebugMsg(Format('TConfigManager--add %d, opName=%s', [i, stOp.opName]));
       Inc(i); 
       strRet:= mInitFile.ReadString(Format('AutoOp%d', [i]), cntIdentOpName, '');
     end;
@@ -163,6 +165,27 @@ end;
 function TConfigManager.GetLoginUserPsw: string;
 begin
    result:=mLoginUserPsw;
+end;
+
+function TConfigManager.IsAllOpsOperatedAccordDate(
+  date: TDateTime): Boolean;
+var
+  nCount,i :Integer;
+  stOp: TOpStruct;
+begin
+  UpdateAutoOps();
+  nCount := mOpList.Count;
+  Result := True;
+  for i:=0 to nCount-1 do 
+  begin
+    stOp := TOpStruct(mOpList.Items[i]);
+    if stOp.opDate<>(date-1) then
+    begin
+      Result:=False;
+      Exit;
+    end;
+  end;
+  
 end;
 
 end.

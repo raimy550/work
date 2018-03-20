@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "E:\\home\\tangly\\AndroidStudioProjects\\UartDemo\\app\\build\\intermediates\\res\\merged\\debug\\layout\\rs485loop.xml",
+        "source": "E:\\home\\tangly\\AndroidStudioProjects\\UartDemo\\app\\src\\main\\res\\layout\\rs485loop.xml"
+    },
+    {
+        "merged": "E:\\Study\\gitwork\\Android\\AndroidStudioProject\\UartDemo\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_uart_demo.xml",
+        "source": "E:\\Study\\gitwork\\Android\\AndroidStudioProject\\UartDemo\\app\\src\\main\\res\\layout\\activity_uart_demo.xml"
+    },
+    {
+        "merged": "E:\\Study\\gitwork\\Android\\AndroidStudioProject\\UartDemo\\app\\build\\intermediates\\res\\merged\\debug\\layout\\rs485loop.xml",
+        "source": "E:\\Study\\gitwork\\Android\\AndroidStudioProject\\UartDemo\\app\\src\\main\\res\\layout\\rs485loop.xml"
+    },
+    {
+        "merged": "E:\\home\\tangly\\AndroidStudioProjects\\UartDemo\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_uart_demo.xml",
+        "source": "E:\\home\\tangly\\AndroidStudioProjects\\UartDemo\\app\\src\\main\\res\\layout\\activity_uart_demo.xml"
+    }
+]

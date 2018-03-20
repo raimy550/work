@@ -2,65 +2,86 @@ unit DataManager;
 
 interface
 uses
-  Windows,
-  Messages,
-  Dialogs,
-  Controls,
-  StdCtrls,
-  Utils,
-  SysUtils,
-  Classes,
-  Contnrs,
-  StrMap,
-  WeiTuoInfo,
-  YuYueInfo,
-  LoginInfo,
-  DataTrans;
+  Windows,Messages,Dialogs,Controls,StdCtrls,Utils,SysUtils,Classes,
+  Contnrs,StrMap,YuYueInfo,LoginInfo,DataTrans,WeiXiuWeiTuoInfo;
 
 type
   InfoType=(InfoType_None, InfoType_WeiTuo, InfoType_YuYue);
 
-procedure GetWindowsData(h: HWND);
-procedure Init();
-procedure PostData();
-procedure GetLoginData(h: HWND);
-procedure CleanData();
-//更新操作按钮
-procedure UpdateOps(h: HWND);
-function GetInfoType(h: HWND):InfoType;
-procedure UpdateCurInfoType(hContainer: HWND; hInfoOp: HWND);
+{ TDataManager }
+
+  TDataManager = class(TObject)
+  private
+      mYuYueInfo: CYuYueInfo;
+      mWeiTuoInfo: CWeiTuoInfo;
+      mCurInfoType: InfoType;
+      mDataTrans: TDataTrans;
+  private
+    function AddDataWeiTuo(data: string; tab: Integer): Integer;
+    function DoLoginWindows(h: HWND): Boolean;
+    function DoUpdateOps(h: HWND): Boolean;
+    function DoWindows(h: HWND): Boolean;
+    function DoWindowsWeiXiu(h: HWND): Boolean;
+    function DoWindowsYuYue(h: HWND): Boolean;
+    procedure GetLoginDataImp(h: HWND);
+    procedure GetWindowsDataImp(h: HWND);
+    function UpdateOpsImp(h: HWND): Boolean;
+
+  protected
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure GetWindowsData(h: HWND);
+    procedure Init();
+    procedure PostData();
+    procedure GetLoginData(h: HWND);
+    procedure CleanData();
+    //更新操作按钮
+    procedure UpdateOps(h: HWND);
+    function GetInfoType(h: HWND):InfoType;
+    procedure UpdateCurInfoType(hContainer: HWND; hInfoOp: HWND);
+  published
+
+  end;
+
 
 implementation
+ 
 
-var
-  mYuYueInfo: CYuYueInfo;
-  mCurInfoType: InfoType;
-
-procedure Init();
+procedure TDataManager.Init();
 begin
-  WeiTuoInfo.Init();
+  //WeiTuoInfo.Init();
   LoginInfo.Init();
   mYuYueInfo := CYuYueInfo.Create;
+  mWeiTuoInfo:= CWeiTuoInfo.Create;
+  mDataTrans := TDataTrans.Create;
   mCurInfoType := InfoType_None;
+  
 end;
 
-procedure CleanData();
+procedure TDataManager.CleanData();
 begin
-  WeiTuoInfo.CleanData;
+//  WeiTuoInfo.CleanData;
+  mWeiTuoInfo.CleanData;
   mYuYueInfo.CleanData;
 end;
 
-function DoWindowsWeiXiu(h: HWND): Boolean;
+function TDataManager.DoWindowsWeiXiu(h: HWND): Boolean;
 begin
   //ShowMessageFmt('%s', ['本次维修---开始']);
-  WeiTuoInfo.ParseData(h);
-  WeiTuoInfo.SaveShowData();
-  WeiTuoInfo.SaveJsonData();
+//  WeiTuoInfo.ParseData(h);
+//  WeiTuoInfo.SaveShowData();
+//  WeiTuoInfo.SaveJsonData();
+    mWeiTuoInfo.ParseData(h);
+    mWeiTuoInfo.SaveShowData;
+    mWeiTuoInfo.SaveJsonData;
   //ShowMessageFmt('%s', ['本次维修---结束']);
   Result := True;
 end;
 
-function DoWindowsYuYue(h: HWND): Boolean;
+function TDataManager.DoWindowsYuYue(h: HWND): Boolean;
 begin
   //ShowMessageFmt('%s', ['客户预约---开始']);
   mYuYueInfo.ParseData(h);
@@ -70,7 +91,7 @@ begin
   Result := True;
 end;
 
-function DoWindows(h: HWND): Boolean;
+function TDataManager.DoWindows(h: HWND): Boolean;
 var
   buf: array[0..255] of Char; {这个缓冲区是获取类名用的, 如果不需要可以删除}
   nRet, nRet1, tab: Integer;
@@ -87,7 +108,7 @@ begin
       begin
         tab := tcl.TabOrder;
         tcl.GetTextBuf(buf, 255);
-        nRet :=  Pos('本次维修', buf);
+        nRet :=  Pos('维修委托书', buf);
         if (nRet<>0) and (mCurInfoType=InfoType_WeiTuo) then
         begin
           Result := DoWindowsWeiXiu(h);
@@ -108,7 +129,7 @@ begin
   end;
 end;
 
-function DoLoginWindows(h: HWND): Boolean;
+function TDataManager.DoLoginWindows(h: HWND): Boolean;
 var
   buf: array[0..255] of Char;
   nRet, nRet1, tab: Integer;
@@ -117,7 +138,7 @@ begin
     LoginInfo.ParseData(h);
 end;
 
-procedure GetLoginDataImp(h: HWND);
+procedure TDataManager.GetLoginDataImp(h: HWND);
 var
   bDone: Boolean;
 begin
@@ -136,7 +157,7 @@ begin
   end;
 end;
 
-procedure GetLoginData(h: HWND);
+procedure TDataManager.GetLoginData(h: HWND);
 begin
   //ShowMessageFmt('%s',['获取登录信息开始']);
   GetLoginDataImp(h);
@@ -144,7 +165,7 @@ begin
   LoginInfo.SaveJsonData();
 end;
 
-procedure GetWindowsDataImp(h: HWND);
+procedure TDataManager.GetWindowsDataImp(h: HWND);
 var
   bDone: Boolean;
 begin
@@ -160,22 +181,22 @@ begin
   end;
 end;
 
-procedure GetWindowsData(h: HWND);
+procedure TDataManager.GetWindowsData(h: HWND);
 begin
   GetWindowsDataImp(h);
 end;
 
-function AddDataWeiTuo(data: string; tab: Integer): Integer;
+function TDataManager.AddDataWeiTuo(data: string; tab: Integer): Integer;
 begin
   Result :=0;
 end;
 
-procedure PostData();
+procedure TDataManager.PostData();
 var
   ws: String;
 begin
-  ws := WeiTuoInfo.GetJsonData();
-  DataTrans.HttpPost(Utils.cntUrl, ws);
+  ws := mWeiTuoInfo.GetJsonData();
+  mDataTrans.HttpPost(Utils.cntUrl, ws);
 end;
 
 
@@ -186,7 +207,7 @@ end;
   参数:      h: HWND
   返回值:    Boolean
 -------------------------------------------------------------------------------}
-function DoUpdateOps(h: HWND): Boolean;
+function TDataManager.DoUpdateOps(h: HWND): Boolean;
 var
   tcl: TWinControl;
 begin
@@ -194,7 +215,7 @@ begin
 
   if Utils.FilterControls(h) then
   begin
-     if mYuYueInfo.UpdateOp(h) or WeiTuoInfo.UpdateOp(h) then
+     if mYuYueInfo.UpdateOp(h) or mWeiTuoInfo.UpdateOp(h) then
       begin
           Result := True;
           Exit;
@@ -204,7 +225,7 @@ begin
 
 end;
 
-function UpdateOpsImp(h: HWND): Boolean;
+function TDataManager.UpdateOpsImp(h: HWND): Boolean;
 begin
 
    if DoUpdateOps(h) then
@@ -220,14 +241,14 @@ begin
   end;
 end;
 
-procedure UpdateOps(h: HWND);
+procedure TDataManager.UpdateOps(h: HWND);
 begin
     UpdateOpsImp(h);
 end;
 
-function GetInfoType(h: HWND):InfoType;
+function TDataManager.GetInfoType(h: HWND):InfoType;
 begin
-  if h=WeiTuoInfo.GetOp() then
+  if h=mWeiTuoInfo.GetOp() then
     Result := InfoType_WeiTuo
   else if h=mYuYueInfo.GetOp then
     Result := InfoType_YuYue
@@ -243,11 +264,22 @@ end;
   参数:      hContainer: HWND; hInfoOp: HWND
   返回值:    无
 -------------------------------------------------------------------------------}
-procedure UpdateCurInfoType(hContainer: HWND; hInfoOp: HWND);
+procedure TDataManager.UpdateCurInfoType(hContainer: HWND; hInfoOp: HWND);
 begin
     UpdateOps(hContainer);
     mCurInfoType := GetInfoType(hInfoOp);
  //   ShowMessageFmt('UpdateCurInfoType---%d', [Integer(mCurInfoType)]);
+end;
+
+constructor TDataManager.Create;
+begin
+  Init;
+end;
+
+destructor TDataManager.Destroy;
+begin
+
+  inherited;
 end;
 
 end.

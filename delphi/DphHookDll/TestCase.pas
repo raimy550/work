@@ -5,7 +5,7 @@ interface
   Windows,Messages,Dialogs,cxGrid,Controls,SysUtils,Classes,
   cxGridDBTableView,cxGridTableView,cxGridCustomView,cxDBEdit,cxCustomData,
   cxTreeView,cxCheckBox,dxNavBar,dxNavBarCollns,ComCtrls,Utils,
-  AutoOps,MyLog,Variants,OpManager,cxCalendar,ConfigManager;
+  AutoOps,MyLog,Variants,OpManager,cxCalendar,ConfigManager, DataTrans, uLkJSON;
 type
   CTestCase = class(TObject)
   private
@@ -37,6 +37,8 @@ type
     procedure TestLocation();
     //测试屏幕点击
     procedure TestClickPoint();
+    //
+    procedure TestFileUpLoad();
     
     
     
@@ -93,7 +95,10 @@ implementation
 //   CMyLog.DebugMsg(TConfigManager.GetInstance.GetExePath);
 
 //测试定点点击
-TestClickPoint;
+//TestClickPoint;
+
+//测试数据上传
+//  TestFileUpLoad();
   end;
 
   procedure CTestCase.TestCatchWindowsData();
@@ -488,7 +493,7 @@ begin
 //   Sleep(5000);
 //   Utils.ClickPoint(183, 170);
 //   Utils.ClickPoint(560, 170);
-   TTestPointClickThread.Create(False);
+//   TTestPointClickThread.Create(False);
   
 end;
 
@@ -519,6 +524,27 @@ begin
    Utils.ClickPoint(560, 170);
    end;
   
+end;
+
+procedure CTestCase.TestFileUpLoad;
+var
+  trans:TDataTrans;
+ jsBase: TlkJSONobject;
+ fileContent,urlContent, sRet, fileName: string;
+begin
+  fileName := '客户筛选设置_20171129-20171203.txt';
+  fileContent:=Utils.ReadFileToHex(Utils.GetDllPath+fileName);
+  jsBase := TlkJSONobject.Create(True);
+  jsBase.Add('fileName', fileName);
+  jsBase.Add('fileData', fileContent);
+
+  trans:= TDataTrans.Create;
+  urlContent:=TlkJSON.GenerateText(jsBase);
+  urlContent := StringReplace(urlContent, ' ', '', [rfReplaceAll]);
+ // Utils.SaveData(Utils.GetDllPath+'111.txt', urlContent, False );
+  sRet := trans.HttpPost(Utils.cntUrlUpLoadFile, urlContent);
+  
+  CMyLog.DebugMsg(sRet);
 end;
 
 end.

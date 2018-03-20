@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "E:\\Study\\gitwork\\Android\\AndroidStudioProject\\UartDemo\\app\\build\\intermediates\\res\\merged\\debug\\xml\\serial_port_preferences.xml",
+        "source": "E:\\Study\\gitwork\\Android\\AndroidStudioProject\\UartDemo\\app\\src\\main\\res\\xml\\serial_port_preferences.xml"
+    },
+    {
+        "merged": "E:\\home\\tangly\\AndroidStudioProjects\\UartDemo\\app\\build\\intermediates\\res\\merged\\debug\\xml\\serial_port_preferences.xml",
+        "source": "E:\\home\\tangly\\AndroidStudioProjects\\UartDemo\\app\\src\\main\\res\\xml\\serial_port_preferences.xml"
+    }
+]

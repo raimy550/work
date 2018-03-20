@@ -26,7 +26,8 @@ const
   cntDebugModule: Integer = 0;
   cntWaitTime: Integer = 1000*60*5;
   cntWaitWndTime: Integer = 1000*60*3;
-  cntTimerIntervalRun: Integer = 1000*60;
+  cntTimerIntervalRun: Integer = 1000*6; //监测终端软件运行
+  cntTimerIntervalAutoOpsRepeat: Integer = 10*60*1000;//重复执行自动操作
   cntTimerIntervalAutoOp: Integer = 1000*60;
   cntAutoOpTime: Integer=1;
 
@@ -36,6 +37,7 @@ const
   cntSaveGridDataName: string = 'grid.txt';
   cntSaveLogName: string = 'log.txt';
   cntUrl: string = 'http://192.168.7.150:8063/api/v1.0.0/createVWMaintainProxyOrder';
+  cntUrlUpLoadFile: string = 'http://192.168.7.150:8066/api/v1.0.0/uploadFile';
   cntCfgFileName: string = 'config.ini';
   
   cntDataDir: string = 'HookData\';
@@ -84,7 +86,9 @@ const
   procedure RunApp(path: string);
   function KillAppExe(const aPathExe: string): Boolean;
 
-  procedure SaveGridData(hParent: HWND; saveDir: string; fileName:string);
+  function SaveGridData(hParent: HWND; saveDir: string; fileName:string):Boolean;
+  function ReadFileToHex(FileName: string): string;
+  function IsInAutoOpTime():Boolean;
 
 //文件类
   function IsFileExist(path :string): Boolean;
@@ -651,7 +655,7 @@ begin
   Result := Copy(ModuleName, 1, i);
 end;
 
-procedure SaveGridData(hParent: HWND; saveDir: string; fileName:string);
+function SaveGridData(hParent: HWND; saveDir: string; fileName:string):Boolean;
 var
     cxGridDBTableView: TcxGridDBTableView;
     cxView, cxView1: TcxCustomGridView;
@@ -666,6 +670,7 @@ var
     hFind: HWND;
 
   begin
+      Result:=False;
       hFind:=FindeWindowBy(hParent, '', 'TcxGrid');
       if (hFind<>0) then
       begin
@@ -677,26 +682,24 @@ var
       
       
       if grid.ActiveLevel = nil then
-        ShowMessageFmt('%s',['ActiveLevel is nil'])
+        Exit
       else
       begin
          cxView := grid.FocusedView;
-   
-         if cxView=cxView1 then
-          ShowMessageFmt('%s',['ActiveLevelGridView is FocusedView']);
-
 
          if cxView=nil then
-           ShowMessageFmt('%s',['cxGridView is nil']);
+           Exit;
 
          if cxView <> nil then
          begin
            if cxView.DataController=nil then
-              ShowMessageFmt('%s',['DataController is nil'])
+              Exit
            else
            begin
              nRowCount := cxView.DataController.GetRowCount();
              nColCount := cxView.DataController.GetItemCount();
+             if nRowCount=0 then
+             Exit;
 
              s := '';
              s1 := '';
@@ -740,6 +743,8 @@ var
            end;
          end;
       end;
+
+      Result:=True;
   end;
 
 procedure RunApp(path: string);
@@ -782,9 +787,43 @@ begin
   //Windows.ClientToScreen(h, point);
   SetCursorPos(pointX, pointY);
   mouse_event(MOUSEEVENTF_LEFTDOWN,pointX,pointY,0,0); 
+  Sleep(300);
   mouse_event(MOUSEEVENTF_LEFTUP,pointX,pointY,0,0); 
-  Sleep(1000);
+  Sleep(3000);
 end;
+
+function ReadFileToHex(FileName: string): string;
+var
+  b: Byte;
+begin
+  Result := '';
+  if not FileExists(FileName) then Exit;
+  with TMemoryStream.Create do begin
+    LoadFromFile(FileName);
+    Position := 0;
+    while Position < Size do
+    begin
+      ReadBuffer(b, 1);
+      Result := Result + Format('%.2x ', [b]) ;
+    end;
+    Trim(Result);
+    Free;
+  end;
+end;
+
+function IsInAutoOpTime():Boolean;
+var
+  Year, Month, Day, Hour, Min, Sec, MSec:Word;
+  curTime: TDateTime ;
+begin
+  Result:=False;
+  curTime := Now;
+  DecodeDate(curTime, Year, Month, Day);
+  DecodeTime(curTime, Hour, Min, Sec, MSec); 
+  if (Hour>=cntAutoOpTime) and (Hour-cntAutoOpTime <= 2) then
+    Result:=True;
+  
+end;  
   
 initialization
   ThreadID := GetMainThreadIdFromName(Utils.cntInjectExe);

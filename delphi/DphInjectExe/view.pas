@@ -46,6 +46,7 @@ implementation
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   mLogic := TLogic.Create;
+  //SetWindowLong(Application.Handle,GWL_EXSTYLE,WS_EX_TOOLWINDOW); 
   //Application.ShowMainForm := not mLogic.IsExeFileExist();
   //setHook();
 end;
@@ -53,6 +54,7 @@ end;
 procedure TForm1.btn1Click(Sender: TObject);
 begin
   mLogic.DoRemoteInject();
+  setHook();
 end;
 
 procedure TForm1.btn2Click(Sender: TObject);
@@ -103,8 +105,8 @@ end;
 procedure TForm1.mTmrMonitorTimer(Sender: TObject);
 begin
   //mTmrAutoOp.Enabled := False;
-  mTmrMonitor.Interval := Utils.cntTimerIntervalRun;
-  mLogic.DoTimerMonitor();
+  //mTmrMonitor.Interval := Utils.cntTimerIntervalRun;
+  mLogic.DoTimerMonitor(mTmrMonitor);
 end;
 
 end.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/tangly/AndroidSDK/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="23.0.3"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
+        <dex dex="/home/tangly/AndroidStudioProjects/UartDemo/app/build/intermediates/pre-dexed/debug/support-v4-19.1.0_139c4c5900164552d12860593649e263fdf2b915.jar" />
+    </item>
+
+</items>

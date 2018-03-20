@@ -9,7 +9,9 @@ TlHelp32,
 Windows,
 Utils,
 IniFiles,
-MyLog;
+MyLog,
+ExtCtrls,
+ConfigManager;
 
 //const
 //cntInjectDll: string = 'DelphiHookDll.dll';
@@ -19,11 +21,13 @@ MyLog;
  private
    mInitFile: TIniFile;
    mExePath: string;
+   mLargerTimer: Boolean;
+   mConfigManager: TConfigManager;
   public
     constructor Create;
     procedure DoStart(path:string);
     procedure DoRemoteInject();
-    procedure DoTimerMonitor();
+    procedure DoTimerMonitor(ctlTimer: TTimer);
     function IsExeFileExist: Boolean;
     
   private
@@ -32,6 +36,7 @@ MyLog;
     function InjectDll(const DllFullPath: string; const dwRemoteProcessId: Cardinal): Boolean;
     function GetProcessIDByName(const name: string): DWORD;
     function EnableDebugPriv: Boolean;
+    procedure ReStart();
     end;
 
 implementation
@@ -40,15 +45,17 @@ implementation
     cRet: Cardinal;
   begin
     InitExeFilePath;
-    if mExePath<>'' then
-    begin
-      cRet := Utils.GetProcessIDByName(Utils.cntInjectExe);
-      if cRet=0 then
-      begin
-        Utils.RunApp(mExePath);
-        DoRemoteInject();
-      end;
-    end;
+    mConfigManager := TConfigManager.GetInstance;
+    
+//    if mExePath<>'' then
+//    begin
+//      cRet := Utils.GetProcessIDByName(Utils.cntInjectExe);
+//      if cRet=0 then
+//      begin
+//        Utils.RunApp(mExePath);
+//        DoRemoteInject();
+//      end;
+//    end;
   end;
 
   procedure TLogic.DoStart(path:string);
@@ -108,7 +115,7 @@ begin
   begin
     tp.PrivilegeCount          := 1;
     tp.Privileges[0].Attributes := SE_PRIVILEGE_ENABLED;
-    // 调整权限
+  // 调整权限
     Result := AdjustTokenPrivileges(hToken, false, tp, SizeOf(tp), nil, rl);
   end;
 end;
@@ -201,22 +208,43 @@ begin
     mExePath := mInitFile.ReadString('ExePath', 'path', '');
 end;
 
-procedure TLogic.DoTimerMonitor;
+procedure TLogic.DoTimerMonitor(ctlTimer: TTimer);
 var
-  time: TDateTime;
   nRet: Cardinal;
+  bDone : Boolean;
 begin
-   nRet := Utils.GetProcessIDByName(Utils.cntInjectExe);
-   if nRet=0 then
-   begin
-      Utils.RunApp(mExePath);
-      DoRemoteInject();
-   end;
+//    nRet := Utils.GetProcessIDByName(Utils.cntInjectExe);
+//   if Utils.IsInAutoOpTime=True then
+//   begin
+//     //ctlTimer.Enabled :=False;
+//      bDone := mConfigManager.IsAllOpsOperatedAccordDate(Date);
+//      
+//      if bDone=False then
+//      begin
+//       ctlTimer.Interval := Utils.cntTimerIntervalAutoOpsRepeat;
+//       if nRet<>0 then
+//        Utils.KillAppExe(mExePath);
+//        Sleep(1000);  
+//        ReStart();
+//        Exit;
+//      end;
+//   end
+//   else
+//    ctlTimer.Interval := Utils.cntTimerIntervalRun;
+//
+//   if nRet=0 then
+//    ReStart();
 end;
 
 function TLogic.IsExeFileExist: Boolean;
 begin
   Result := mExePath<>'';
+end;
+
+procedure TLogic.ReStart;
+begin
+    Utils.RunApp(mExePath);
+    DoRemoteInject();
 end;
 
 end.

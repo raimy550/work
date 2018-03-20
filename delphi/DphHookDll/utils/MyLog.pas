@@ -2,21 +2,7 @@ unit MyLog;
 
 interface
 uses
-Windows,
-Messages,
-Dialogs,
-
-cxGrid,
-Controls,
-
-
-
-SysUtils,
-
-
-
-Classes,
-Utils;
+Windows,Messages,Dialogs,cxGrid,Controls,SysUtils,Classes,Utils;
 
 var
   gBDebugE, gBDebugI, gBDebugMsg, gBDebugSave: Boolean;

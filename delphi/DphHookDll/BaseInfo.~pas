@@ -15,6 +15,7 @@ uses
       PtlInfo: TStrMap;     //key:tab,  value:协议信息
       PtlDataMap: TStrMap;  //key:tab,  value:协议数据
       WndOp: HWND;   // 操作按钮
+      mGridCount: Integer; //Grid数量
 
 
       

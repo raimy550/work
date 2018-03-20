@@ -1,0 +1,105 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="vertical"
+    android:fadingEdge="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     android:layout_marginLeft="20dip"
+	android:orientation="vertical"
+    tools:context=".MainActivity" >
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:orientation="horizontal"
+        >
+ <Button
+        android:id="@+id/ButtonSetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="串口设置" />
+  <CheckBox 
+     android:id="@+id/cb"
+       android:layout_marginLeft="20dip"
+        android:textSize="20sp"
+    android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:checked="false"
+     android:text="RS485"   />
+  
+   <Button
+        android:id="@+id/EnableCfg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zigbee进入cfg模式" />
+   
+
+  
+</LinearLayout>
+     <TextView
+        android:id="@+id/tvUartSetting"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>     
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:orientation="horizontal"
+        >
+         <TextView
+             android:layout_marginRight="20dip"
+             android:text="接收数据："
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>     
+    <TextView
+        android:id="@+id/tvMsgRecv"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>     
+        
+
+</LinearLayout>
+    <EditText
+        android:id="@+id/editHex"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:hint="请输入十六进制数"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_marginBottom="5dip"
+        android:orientation="horizontal">
+
+        <Button
+        android:id="@+id/btnSend"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发送数据" />
+
+        <TextView
+        android:text="@string/guide"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
+    <Button
+        android:id="@+id/rs485Btn"
+        android:layout_width="wrap_content"
+        android:text="循环打开灵动高科锁控板"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+</ScrollView>

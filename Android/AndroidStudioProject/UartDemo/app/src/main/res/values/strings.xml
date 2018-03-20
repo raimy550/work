@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">串口测试</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="guide">1. 先设置所使用的串口和波特率, 其他设置默认使用8N1。\n2. 如需使用RS485，需设置串口为/dev/ttyS3，并且勾选RS485复选框。\n3. 在“接收数据”行会显示接收到的数据，16进制形式\n4. 输入16进制数，比如ab 1f 34，数字之间用空格隔开，然后点击“发送数据”按钮发送\n5.测试zigbee模式前，需要设置串口为/dev/ttyS4,38400,8N1\n</string>
+
+</resources>

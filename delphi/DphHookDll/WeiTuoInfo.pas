@@ -525,12 +525,6 @@ begin
         ParseWeiXiuYuGuData(hChild);
     end;
 
-    nRet := Pos('TcxGrid', buf);
-    if nRet<>0 then
-    begin
-        ParseGridData(hChild);
-    end;
-
 
     hChild := GetWindow(hChild, GW_HWNDNEXT);
   end;
