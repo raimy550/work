@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="content_tv_size">30sp</dimen>
+    <dimen name="title_height">50dp</dimen>
+    <dimen name="title_font">30sp</dimen>
+
+    <dimen name="item_height">50dp</dimen>
+    <dimen name="item_main">30dp</dimen>
+    <dimen name="item_sec">20dp</dimen>
+    <dimen name="item_font_main">20sp</dimen>
+    <dimen name="item_font_sec">12sp</dimen>
+
+    <dimen name="detail_text_font">20sp</dimen>
+
+
+</resources>

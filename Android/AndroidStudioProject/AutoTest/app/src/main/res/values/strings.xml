@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">AutoTest</string>
+    <string name="op_start">开始</string>
+
+    <string name="test_serial">串口测试</string>
+    <string name="test_usb">usb测试</string>
+    <string name="test_crash">钱箱测试</string>
+    <string name="test_trumpet">喇叭测试</string>
+    <string name="test_headset">耳机测试</string>
+    <string name="test_network">网口测试</string>
+    <string name="test_wifi">wifi测试</string>
+    <string name="test_bt">蓝牙测试</string>
+
+    <string name="detail_serial">[串口测试]</string>
+    <string name="detail_usb">[usb测试]</string>
+    <string name="detail_crash">[钱箱测试]</string>
+    <string name="detail_trumpet">[喇叭测试]</string>
+    <string name="detail_headset">[耳机测试]</string>
+    <string name="detail_network">[网口测试]</string>
+    <string name="detail_wifi">[wifi测试]</string>
+    <string name="detail_bt">[蓝牙测试]</string>
+
+    <string name="info_suc">测试成功</string>
+    <string name="info_fail">测试失败</string>
+    <string name="info_testing">测试中...</string>
+
+    <string name="dlg_crash">测试钱箱，请确定钱箱是否成功打开?</string>
+    <string name="dlg_trumpet">测试喇叭，请确定喇叭是否有声音输出?</string>
+    <string name="dlg_headset">测试耳麦，请确定耳麦是否有声音输出?</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.android.clothingrecycle.MainActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:paddingTop="5dp"
+        android:textAlignment="center"
+        android:text="衣物回收管理平台"
+        android:textSize="@dimen/title_font"
+        android:background="@android:color/holo_green_light"/>
+    <ListView
+        android:id="@+id/lv_grids"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+</LinearLayout>

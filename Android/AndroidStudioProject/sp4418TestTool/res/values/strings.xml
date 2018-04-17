@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">sp4418TestTool</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <string name="test_ing">测试中</string>
+    <string name="test_ready">待测试</string>
+    <string name="test_success">OK</string>
+    <string name="test_failed">failed</string>
+    
+    <string name="title">4418sp自动化测试工具</string>
+    <string name="sub_title1">串口测试</string>
+    <string name="serial_1">串口1</string>
+    <string name="serial_2">串口2</string>
+    <string name="serial_3">串口3</string>
+    
+    <string name="sub_title2">U盘测试</string>
+    <string name="u_1">U盘1</string>
+    <string name="u_2">U盘2</string>
+    <string name="u_3">U盘3</string>
+    <string name="u_4">U盘4</string>
+    
+    <string name="sub_title3">其他测试</string>
+    <string name="cash_ok">钱箱测试OK</string>
+    <string name="trumpet_ok">喇叭测试OK</string>
+    <string name="headset_ok">耳机测试OK</string>
+    <string name="rj45_ok">RJ45测试OK</string>
+	<string name="wifi_ok">WIFI测试OK</string>
+	<string name="blue_ok">蓝牙测试OK</string>
+    
+</resources>

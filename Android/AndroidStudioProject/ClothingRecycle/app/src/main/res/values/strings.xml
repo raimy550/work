@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ClothingRecycle</string>
+    <string name="content_scan">请扫描二维码，打开空箱</string>
+    <string name="content_cleaning">正在清理柜子，清理完请全部关闭!!</string>
+    <string name="content_gridfull">柜子已满！等待清理中...</string>
+    <string name="info_default">捐出一份爱心,奉献一片真情</string>
 </resources>

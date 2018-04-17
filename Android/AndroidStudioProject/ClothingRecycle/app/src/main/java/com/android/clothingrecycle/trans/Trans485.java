@@ -3,6 +3,7 @@ package com.android.clothingrecycle.trans;
 import com.smatek.uart.UartComm;
 
 /**
+ * 485串口通信接口
  * Created by raimy on 2018-03-16.
  */
 

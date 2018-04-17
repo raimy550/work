@@ -11,6 +11,14 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    /*
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }*/
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -29,4 +37,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.alibaba:fastjson:1.2.10'
+    compile 'com.google.zxing:core:3.0.1'
+    compile files('libs/jcore-android-1.1.9.jar')
+    compile files('libs/jpush-android-3.1.1.jar')
 }

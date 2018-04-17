@@ -1,0 +1,4 @@
+#Thu Mar 22 15:35:26 CST 2018
+base.0=E\:\\Study\\gitwork\\Android\\AndroidStudioProject\\JPushTest\\JPushExample\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
+renamed.0=classes.dex
+file.0=E\:\\Study\\gitwork\\Android\\AndroidStudioProject\\JPushTest\\JPushExample\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex

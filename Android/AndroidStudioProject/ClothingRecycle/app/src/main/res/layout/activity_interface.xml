@@ -9,9 +9,16 @@
         android:gravity="center_horizontal"
         android:padding="10dp">
         <Button
+            android:id="@+id/btn_openall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="打开所有箱子"/>
+
+        <Button
+            android:id="@+id/btn_openone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打开单个箱子"/>
 
     </LinearLayout>
 

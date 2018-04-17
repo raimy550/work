@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/item_height"
+              android:orientation="vertical"
+              >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+<ImageView
+    android:id="@+id/iv_icon"
+    android:layout_width="@dimen/item_height"
+    android:layout_height="@dimen/item_height"
+    android:background="@mipmap/grid_icon"/>
+    <LinearLayout
+        android:id="@+id/layout_content1"
+        android:layout_toRightOf="@id/iv_icon"
+        android:layout_marginLeft="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_gridNo"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/item_main"
+            android:textAlignment="center"
+            android:text="柜子编号"
+            android:textSize="@dimen/item_font_main"/>
+        <TextView
+            android:id="@+id/tv_gridAddr"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/item_sec"
+            android:textAlignment="center"
+            android:text="柜子地址"
+            android:textSize="@dimen/item_font_sec"/>
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_content2"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_gridUsed"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/item_main"
+                android:textAlignment="center"
+                android:text="10(24)"
+                android:textSize="@dimen/item_font_main"/>
+            <TextView
+                android:id="@+id/tv_gridempty_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/item_sec"
+                android:gravity="right"
+
+                android:text="空置率:50%"
+                android:textSize="@dimen/item_font_sec"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/holo_green_light"/>
+</LinearLayout>
