@@ -6,8 +6,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.android.clothingrecycle.Data.DataManager;
-import com.android.clothingrecycle.Data.DoorState;
-import com.android.clothingrecycle.Data.GridData;
+import com.android.clothingrecycle.Data.Grid;
 import com.android.clothingrecycle.Http.HttpManager;
 import com.android.clothingrecycle.tasks.TaskCleaningOpenGrid;
 import com.android.clothingrecycle.tasks.TaskManager;
@@ -24,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -144,15 +144,15 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
             Map.Entry entry = (Map.Entry) it.next();
             int key = (Integer) entry.getKey();
             int value = (Integer) entry.getValue();
-            int curState = DoorState.Door_state_None;
+            int curState = Grid.Door_state_None;
 
-            if (value == DoorState.Door_state_close) {//如果是关闭，则新状态为开
-                curState =  DoorState.Door_state_open;
+            if (value == Grid.Door_state_close) {//如果是关闭，则新状态为开
+                curState =  Grid.Door_state_open;
                 mDataManager.UpdateDoorState(key,curState);
-            } else if (value == DoorState.Door_state_open) {//如果是打开，则新状态为关闭
-                curState =  DoorState.Door_state_close;
+            } else if (value == Grid.Door_state_open) {//如果是打开，则新状态为关闭
+                curState =  Grid.Door_state_close;
                 mDataManager.UpdateDoorState(key, curState);
-                mDataManager.UpdateGridData(key, GridData.State_Empty);
+                mDataManager.UpdateGridData(key, Grid.Grid_State_Empty);
             }
 
             mTaskManager.DoGridDoorStateChange(key, curState);
@@ -181,9 +181,9 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
             Map.Entry entry = (Map.Entry) it.next();
             int key = (Integer) entry.getKey();
             int value = (Integer) entry.getValue();
-            if (value == DoorState.Door_state_open) {//如果是打开，则新状态为关闭
-                mDataManager.UpdateGridData(key, GridData.State_Not_Empty);
-                mDataManager.UpdateDoorState(key, DoorState.Door_state_close);
+            if (value == Grid.Door_state_open) {//如果是打开，则新状态为关闭
+                mDataManager.UpdateGridData(key, Grid.Grid_State_Used);
+                mDataManager.UpdateDoorState(key, Grid.Door_state_close);
                 mHttpManager.HttpUploadGridStatus(mCabinnetNumber,
                         mDataManager.GetGridCount(),
                         mDataManager.GetGridUsedCount());//箱门关闭，上传柜子状态
@@ -195,8 +195,8 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
                 }
                 mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GetNextEmptyGridQr));
                 DoHttpGetQRCode();
-            }else{
-                mDataManager.UpdateDoorState(key, DoorState.Door_state_open);
+            }else if (value == Grid.Door_state_close){
+                mDataManager.UpdateDoorState(key, Grid.Door_state_open);
             }
         }
 
@@ -278,17 +278,14 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
         mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GridCleaning));
 
 
-        Map<Integer, Integer> map = mDataManager.GetGridStates();
-        Set entrys = map.entrySet();
-        Iterator it = entrys.iterator();
-        while (it.hasNext()){
-            Map.Entry entry = (Map.Entry)it.next();
-            Integer key = (Integer) entry.getKey();
-            Integer value = (Integer)entry.getValue();
-           // mTransManager.PushCmd(new TransParam(TransParam.eCmd.Cmd_Open_Dor, 1, key+1));
-            if(value == GridData.State_Not_Empty){
-                TaskBase task = new TaskCleaningOpenGrid(key, mTaskManager);
-                mTaskManager.AddTask(task);
+        List<Grid> grids= mDataManager.GetGridStates();
+        for (int i=0; i<grids.size();i++){
+            Grid grid = grids.get(i);
+            int gridState = grid.getGridState();
+            int gridNo = grid.getGridNo();
+            if(gridState == Grid.Grid_State_Used){
+            TaskBase task = new TaskCleaningOpenGrid(gridNo, mTaskManager);
+            mTaskManager.AddTask(task);
             }
         }
     }

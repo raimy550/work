@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.clothingrecycle.Data.DoorState;
+import com.android.clothingrecycle.Data.Grid;
 import com.android.raimy.utils.MyTimer;
 import com.android.raimy.utils.ToastHelper;
 import com.android.raimy.utils.ui.framework.InterfaceUi;
@@ -99,11 +99,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int key = (Integer) entry.getKey();
             int value = (Integer) entry.getValue();
             String strConent="";
-            if(value == DoorState.Door_state_close){
+            if(value == Grid.Door_state_close){
                 strConent = String.format("<<%d>> 门打开!",key+1);
-            }else if(value == DoorState.Door_state_open){
+            }else if(value == Grid.Door_state_open){
                 strConent = String.format("<<%d>> 门关闭!", key+1);
-            }else if(value == DoorState.Door_state_cleaning){
+            }else if(value == Grid.Door_state_cleaning){
                 strConent = String.format("<<%d>> 门清理中!清理完成后请关门！",key+1);
             }
             ToastHelper.showToast(this, strConent);

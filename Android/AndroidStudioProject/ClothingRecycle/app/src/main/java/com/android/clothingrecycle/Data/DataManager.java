@@ -7,7 +7,7 @@ import com.android.raimy.utils.AbstractSingleton;
 import com.android.raimy.utils.LogHelper;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,8 +16,7 @@ import java.util.Map;
 
 public class DataManager {
     private final static String TAG = "DataManager";
-    private GridData mGridData;
-    private DoorState mDoorStates;
+    private Cabinet mCabinet;
     private FileSaver mSaver;
     private Context mAppContext;
     private String mDataSavePath;
@@ -38,31 +37,35 @@ public class DataManager {
         File file =  Environment.getExternalStorageDirectory();
         mDataSavePath = file.toString()+"/"+File_Name;
         mSaver = new FileSaver(mDataSavePath);
-        mDoorStates = new DoorState();
+
         InitData();
     }
 
     public void InitData(){
         boolean bNewData = true;
         if(new File(mDataSavePath).exists()) {
-            mGridData = mSaver.ParseFile();
-            if (mGridData != null) {
+            mCabinet = mSaver.ParseFile();
+            if (mCabinet != null) {
                 bNewData = false;
             }
         }
         if(bNewData)
         {
-            mGridData = new GridData();
-            mGridData.setGridIdent("abc-001");
-            Map<Integer, Integer> map= new HashMap<Integer, Integer>();
-            //map.put(6, 0);
-            map.put(7, 0);
-            map.put(8, 0);
-            mGridData.setGridStates(map);
-            mSaver.SaveFile(mGridData);
+            mCabinet = new Cabinet();
+            Grid grid= new Grid();
+            grid.setGridNo(7);
+            grid.setGridState(Grid.Grid_State_Empty);
+            mCabinet.AddGrid(grid);
+
+            grid= new Grid();
+            grid.setGridNo(8);
+            grid.setGridState(Grid.Grid_State_Empty);
+            mCabinet.AddGrid(grid);
+
+            mSaver.SaveFile(mCabinet);
         }
 
-        LogHelper.logD(TAG, mGridData.toString());
+        LogHelper.logD(TAG, mCabinet.toString());
     }
 
     public void ResetData(){
@@ -74,15 +77,9 @@ public class DataManager {
         InitData();
     }
 
-    public void UpdateGridData(int doorID, int gridState){
-        mGridData.UpdateGridData(doorID, gridState);
-        mSaver.SaveFile(mGridData);
-    }
-
-    public boolean UpdateDoorsStates(boolean[] bStates, Map<Integer, Integer> retInfo){
-        boolean bRet = false;
-        bRet = mDoorStates.UpdateDoorsStates(bStates, retInfo);
-        return bRet;
+    public void UpdateGridData(int gridNo, int gridState){
+        mCabinet.UpdateGridData(gridNo, gridState);
+        mSaver.SaveFile(mCabinet);
     }
 
     /**
@@ -92,19 +89,19 @@ public class DataManager {
      * @return 返回是否有门改变状态
      */
     public boolean GetChangedDoors(boolean[] bStates, Map<Integer, Integer> retInfo){
-        return mDoorStates.GetChangedDoors(bStates, retInfo);
+        return mCabinet.GetChangedDoors(bStates, retInfo);
     }
 
     public int GetEmptyGrid(){
         int nRet = -1;
-        nRet = mGridData.GetEmptyGrid();
+        nRet = mCabinet.GetEmptyGrid();
 
         return nRet;
     }
 
     public int GetEmptyGridSize(){
         int nRet = 0;
-        nRet = mGridData.GetEmptyGridSize();
+        nRet = mCabinet.GetEmptyGridSize();
 
         return nRet;
     }
@@ -114,36 +111,33 @@ public class DataManager {
     }
 
     public int GetGridCount(){
-        return mGridData.GetGridCount();
+        return mCabinet.GetGridCount();
     }
 
     public int GetGridUsedCount(){
-        return mGridData.GetGridUsedCount();
+        return mCabinet.GetGridUsedCount();
     }
 
-    public Map<Integer, Integer> GetGridStates(){
-        Map<Integer, Integer> map = mGridData.getGridStates();
+    public List<Grid> GetGridStates(){
+        List<Grid> grids = mCabinet.GetGridStates();
 
-        return map;
+        return grids;
     }
 
-    public int GetDoorState(int doorId){
-        return mDoorStates.GetDoorState(doorId);
-    }
-
-    public void UpdateDoorState(int doorId, int state){
-        mDoorStates.UpdateDoorState(doorId, state);
+    public void UpdateDoorState(int gridNo, int state){
+        mCabinet.UpdateDoorState(gridNo, state);
+        mSaver.SaveFile(mCabinet);
     }
 
     public boolean IsCleaning(){
-        return mDoorStates.IsCleaning();
+        return mCabinet.IsCleaning();
     }
 
     public void SetCleaning(boolean bCleaning){
-       mDoorStates.SetCleaning(bCleaning);
+        mCabinet.SetCleaning(bCleaning);
     }
 
     public boolean IsAllDoorsClosed(){
-        return mDoorStates.IsAllDoorsClosed();
+        return mCabinet.IsAllDoorsClosed();
     }
 }

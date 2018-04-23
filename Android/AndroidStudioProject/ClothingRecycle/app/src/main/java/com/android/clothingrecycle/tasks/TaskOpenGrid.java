@@ -1,7 +1,6 @@
 package com.android.clothingrecycle.tasks;
 
-import com.android.clothingrecycle.Data.DoorState;
-import com.android.clothingrecycle.Data.GridData;
+import com.android.clothingrecycle.Data.Grid;
 import com.android.clothingrecycle.trans.TransManager;
 import com.android.clothingrecycle.trans.TransParam;
 
@@ -23,7 +22,7 @@ public class TaskOpenGrid extends Task {
 
     @Override
     protected void DoGridDoorStateChange(int nGridId, int State) {
-        if(nGridId == mGridId && State == DoorState.Door_state_close){
+        if(nGridId == mGridId && State == Grid.Door_state_close){
             NoticeTaskDone();
         }
     }

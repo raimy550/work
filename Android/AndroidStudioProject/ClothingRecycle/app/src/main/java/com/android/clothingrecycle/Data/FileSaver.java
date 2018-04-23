@@ -1,6 +1,7 @@
 package com.android.clothingrecycle.Data;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,8 +27,8 @@ public class FileSaver {
         return true;
     }
 
-    public GridData ParseFile(){
-        GridData gridData = null;
+    public Cabinet ParseFile(){
+        Cabinet ret = null;
         File file = new File(mStrFilePath);
         String laststr="";
         BufferedReader reader=null;
@@ -52,16 +53,16 @@ public class FileSaver {
                 }
             }
 
-            gridData = JSON.parseObject(laststr, GridData.class);
-            if(gridData!=null){
-                gridData.SortDataByKey();
+            ret = JSON.parseObject(laststr, new TypeReference<Cabinet>() {});
+            if(ret!=null){
+                ret.SortDataByKey();
             }
         }
-        return gridData;
+        return ret;
     }
 
-    public void SaveFile(GridData gridData){
-        String str = gridData.GetJsonData();
+    public void SaveFile(Cabinet cabinet){
+        String str = cabinet.GetJsonData();
         try {
             File file = new File(mStrFilePath);
             if (!file.exists()) {
