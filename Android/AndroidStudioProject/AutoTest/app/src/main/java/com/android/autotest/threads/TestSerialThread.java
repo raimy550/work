@@ -7,7 +7,7 @@ import com.android.autotest.IAsyncCallBack;
 import com.android.autotest.utils.TestEntry;
 import com.android.autotest.utils.TestUtils;
 import com.raimy.utils.MyTimer;
-import com.raimy.utils.comm.CommuSerial;
+import com.android.autotest.comm.CommuSerial;
 
 /**
  * Created by raimy on 2018-04-10.

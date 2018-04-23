@@ -1,23 +1,19 @@
 /**
  * 
  */
-package com.raimy.utils.comm;
+package com.android.autotest.comm;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import com.raimy.utils.LogHelper;
 
 
-import android.R.string;
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 //import com.android.platform.utils.SerialOp;
 import android_serialport_api.SerialPort;
 

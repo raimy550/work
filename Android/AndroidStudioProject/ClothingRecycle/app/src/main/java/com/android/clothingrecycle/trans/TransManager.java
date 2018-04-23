@@ -2,9 +2,9 @@ package com.android.clothingrecycle.trans;
 
 import android.content.Context;
 
-import com.raimy.utils.AbstractSingleton;
-import com.raimy.utils.CustMutex;
-import com.raimy.utils.MyTimer;
+import com.android.raimy.utils.AbstractSingleton;
+import com.android.raimy.utils.CustMutex;
+import com.android.raimy.utils.MyTimer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class TransManager implements MyTimer.ITimerCallBack{
     }
 
     public interface ICallBack{
-        void OnCallBack(TransParam param);
+        void OnTransCallBack(TransParam param);
     }
 
     private TransManager(){
@@ -52,7 +52,7 @@ public class TransManager implements MyTimer.ITimerCallBack{
         mAsyncCmdThread = new AsyncCmdThread(mTrans, mCallBack);
         mAsyncCmdThread.start();
 
-        mMyTimer = new MyTimer(this, 1000, 3000);
+        mMyTimer = new MyTimer(this, 1000, 1000);
         mMyTimer.startTimer();
 
     }

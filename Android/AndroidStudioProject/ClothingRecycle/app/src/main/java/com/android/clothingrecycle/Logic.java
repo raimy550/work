@@ -4,33 +4,26 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.android.clothingrecycle.Data.DataManager;
 import com.android.clothingrecycle.Data.DoorState;
 import com.android.clothingrecycle.Data.GridData;
 import com.android.clothingrecycle.Http.HttpManager;
+import com.android.clothingrecycle.tasks.TaskCleaningOpenGrid;
+import com.android.clothingrecycle.tasks.TaskManager;
 import com.android.clothingrecycle.trans.TransManager;
 import com.android.clothingrecycle.trans.TransParam;
-import com.raimy.utils.AbstractSingleton;
-import com.raimy.utils.HttpHelper;
-import com.raimy.utils.LogHelper;
-import com.raimy.utils.ToastHelper;
+import com.android.raimy.utils.AbstractSingleton;
+import com.android.raimy.utils.LogHelper;
+import com.android.raimy.utils.Module.task.TaskBase;
 import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.http.CacheStrategy;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,12 +39,12 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
     private DataManager mDataManager;
     private HttpManager mHttpManager;
     private final static String TAG = "Logic";
-
     private String mJpushRegistrationID;
     private String mCabinnetNumber;
     private Bitmap mQrCode;
     private InputStream mQrCodeStream;
     private LogicParam.LogicCallBack mLogicCallBack;
+    private TaskManager mTaskManager;
 
     public Bitmap getmQrCode() {
         return mQrCode;
@@ -60,9 +53,6 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
     public InputStream GetQrCodeStream(){
         return mQrCodeStream;
     }
-
-
-
 
     public static AbstractSingleton<Logic> ObjCreater = new AbstractSingleton<Logic>() {
         @Override
@@ -82,6 +72,9 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
         mTransManager = TransManager.ObjCreater.GetInstance();
         mHttpManager = new HttpManager(this);
         mDataManager.Init(appContext);
+        mTaskManager = new TaskManager(mAppContext);
+        mTaskManager.Init();
+        mTaskManager.StartTasks();
 
         InitJPush(appContext);
         InitTrans(appContext);
@@ -112,7 +105,7 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
     private void DoHttpGetQRCode(){
         int nGrid = mDataManager.GetEmptyGrid();
         if(nGrid != -1) {
-            mHttpManager.HttpGetQRCode(mCabinnetNumber, nGrid+1);
+            mHttpManager.HttpGetQRCode(mCabinnetNumber, nGrid);
         }else{
             mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GridStateFull));
         }
@@ -123,15 +116,6 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
         mTransManager.UnInit();
     }
 
-//    public void DoTestOpenAll(){
-//        int info[] = new int[5];
-//        //mTrans.OpenDoor(1, 0, info);
-//    }
-
-//    public void DoTestOpenOne(){
-//        int info[] = new int[5];
-//        //mTrans.OpenDoor(1, 9, info);
-//    }
 
     @Override
     public void onFailure(Request request, IOException e) {
@@ -160,13 +144,19 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
             Map.Entry entry = (Map.Entry) it.next();
             int key = (Integer) entry.getKey();
             int value = (Integer) entry.getValue();
+            int curState = DoorState.Door_state_None;
+
             if (value == DoorState.Door_state_close) {//如果是关闭，则新状态为开
-                mDataManager.UpdateDoorState(key, DoorState.Door_state_open);
+                curState =  DoorState.Door_state_open;
+                mDataManager.UpdateDoorState(key,curState);
             } else if (value == DoorState.Door_state_open) {//如果是打开，则新状态为关闭
-                mDataManager.UpdateDoorState(key, DoorState.Door_state_close);
+                curState =  DoorState.Door_state_close;
+                mDataManager.UpdateDoorState(key, curState);
+                mDataManager.UpdateGridData(key, GridData.State_Empty);
             }
 
-            if(mDataManager.IsAllDoorsClosed()){
+            mTaskManager.DoGridDoorStateChange(key, curState);
+            if(mDataManager.IsAllGridEmpty() && mDataManager.IsAllDoorsClosed()){
                 //箱子都关闭，上传状态,退出清理模式
                 mDataManager.SetCleaning(false);
                 mHttpManager.HttpUploadGridStatus(mCabinnetNumber,
@@ -191,12 +181,12 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
             Map.Entry entry = (Map.Entry) it.next();
             int key = (Integer) entry.getKey();
             int value = (Integer) entry.getValue();
-            if (value == DoorState.Door_state_close) {//如果是关闭，则新状态为开
+            if (value == DoorState.Door_state_open) {//如果是打开，则新状态为关闭
                 mDataManager.UpdateGridData(key, GridData.State_Not_Empty);
-                mDataManager.UpdateDoorState(key, DoorState.Door_state_open);
+                mDataManager.UpdateDoorState(key, DoorState.Door_state_close);
                 mHttpManager.HttpUploadGridStatus(mCabinnetNumber,
                         mDataManager.GetGridCount(),
-                        mDataManager.GetGridUsedCount());//箱门打开，上传柜子状态
+                        mDataManager.GetGridUsedCount());//箱门关闭，上传柜子状态
 
                 if (-1 == mDataManager.GetEmptyGrid()) {
                     LogicParam lParam = new LogicParam();
@@ -206,7 +196,7 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
                 mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GetNextEmptyGridQr));
                 DoHttpGetQRCode();
             }else{
-                mDataManager.UpdateDoorState(key, DoorState.Door_state_close);
+                mDataManager.UpdateDoorState(key, DoorState.Door_state_open);
             }
         }
 
@@ -217,7 +207,7 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
     }
 
     @Override
-    public void OnCallBack(TransParam param) {
+    public void OnTransCallBack(TransParam param) {
         switch(param.cmd) {
             case Cmd_Get_AllDoorsStates: {
                 boolean bStatus[] = new boolean[24];
@@ -253,6 +243,7 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
     }
 
     public void DoLogicReset(){
+        mTaskManager.CleanTasks();
         mDataManager.ResetData();
         mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GridCleanOver));
         DoHttpGetQRCode();
@@ -265,7 +256,9 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
             String num = jobj.getString("boxNumber");
             int openNum = Integer.parseInt(num);
             if(openNum != -1) {
-                mTransManager.PushCmd(new TransParam(TransParam.eCmd.Cmd_Open_Dor, 1, openNum));
+               // mTransManager.PushCmd(new TransParam(TransParam.eCmd.Cmd_Open_Dor, 1, openNum));
+                TaskBase task = new TaskCleaningOpenGrid(openNum, mTaskManager);
+                mTaskManager.AddTask(task);
             }
         }else if("openAll".equals(type)){
             Logic.ObjCreater.GetInstance().DoLogicCleanGrid();
@@ -275,10 +268,15 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
 
     public void DoLogicCleanGrid(){
 
+        if(mDataManager.IsAllGridEmpty()){
+            return;
+        }
+
         mDataManager.SetCleaning(true);
-        mDataManager.ResetData();
+        //mDataManager.ResetData();
 
         mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GridCleaning));
+
 
         Map<Integer, Integer> map = mDataManager.GetGridStates();
         Set entrys = map.entrySet();
@@ -287,12 +285,23 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
             Map.Entry entry = (Map.Entry)it.next();
             Integer key = (Integer) entry.getKey();
             Integer value = (Integer)entry.getValue();
-            mTransManager.PushCmd(new TransParam(TransParam.eCmd.Cmd_Open_Dor, 1, key+1));
-
+           // mTransManager.PushCmd(new TransParam(TransParam.eCmd.Cmd_Open_Dor, 1, key+1));
+            if(value == GridData.State_Not_Empty){
+                TaskBase task = new TaskCleaningOpenGrid(key, mTaskManager);
+                mTaskManager.AddTask(task);
+            }
         }
     }
 
     public int GetEmptyGridSize(){
         return mDataManager.GetEmptyGridSize();
+    }
+
+    public int GetTotalGridSize(){
+        return mDataManager.GetGridCount();
+    }
+
+    public int GetUsedGridSize(){
+        return mDataManager.GetGridUsedCount();
     }
 }

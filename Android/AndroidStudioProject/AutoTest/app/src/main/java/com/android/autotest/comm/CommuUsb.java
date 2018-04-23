@@ -1,22 +1,17 @@
 /**
  * 
  */
-package com.raimy.utils.comm;
+package com.android.autotest.comm;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.security.acl.Permission;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import com.raimy.utils.LogHelper;
 
-import android.R.string;
-import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.database.CursorJoiner.Result;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.raimy.utils;
+package com.android.raimy.utils;
 
 import android.util.Log;
 

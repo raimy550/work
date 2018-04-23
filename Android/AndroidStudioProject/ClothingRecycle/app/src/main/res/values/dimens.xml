@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="content_tv_size">30sp</dimen>
+    <dimen name="detail_title_font">30sp</dimen>
+    <dimen name="detail_content_font">20sp</dimen>
+    <dimen name="detail_op_font">20sp</dimen>
 </resources>

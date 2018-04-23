@@ -1,10 +1,10 @@
-package com.raimy.utils.ui.framework;
+package com.android.raimy.utils.ui.framework;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.android.autotest.utils.LogicParam;
+import java.io.Serializable;
 
 /**
  * Created by raimy on 2018-04-10.
@@ -14,16 +14,18 @@ import com.android.autotest.utils.LogicParam;
 public class UiHandler implements Handler.Callback{
     private Handler uiHandler;
     private HandleUiCallBack mUiCallBack;
-    public UiHandler(){
+
+    public UiHandler(HandleUiCallBack callBack){
+        Init(callBack);
     }
 
-    public void Init(HandleUiCallBack callBack){
+    private void Init(HandleUiCallBack callBack){
         uiHandler = new Handler(this);
         mUiCallBack = callBack;
     }
 
     public interface HandleUiCallBack{
-        void OnUiCallBack(LogicParam param);
+        void OnUiCallBack(Serializable logicParam);
     }
 
     @Override
@@ -33,12 +35,12 @@ public class UiHandler implements Handler.Callback{
     }
 
     private void HandleLogic(Message msg){
-        LogicParam param = (LogicParam)msg.getData().getSerializable("LogicParam");
+        Serializable param = msg.getData().getSerializable("LogicParam");
         mUiCallBack.OnUiCallBack(param);
     }
 
 
-    public void SendMessage(LogicParam param){
+    public void SendMessage(Serializable param){
         Message msg = new Message();
         Bundle bundle = new Bundle();
         bundle.putSerializable("LogicParam", param);

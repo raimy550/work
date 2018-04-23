@@ -1,7 +1,6 @@
 package com.android.clothingrecycle.Http;
 
-import com.android.clothingrecycle.Logic;
-import com.raimy.utils.HttpHelper;
+import com.android.raimy.utils.HttpHelper;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.RequestBody;

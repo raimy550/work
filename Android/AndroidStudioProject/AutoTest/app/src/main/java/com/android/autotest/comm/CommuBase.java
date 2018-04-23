@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.raimy.utils.comm;
+package com.android.autotest.comm;
 
 /**
  * @author raimy

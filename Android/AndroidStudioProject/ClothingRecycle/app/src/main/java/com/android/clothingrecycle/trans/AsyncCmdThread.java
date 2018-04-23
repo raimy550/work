@@ -1,9 +1,5 @@
 package com.android.clothingrecycle.trans;
 
-import android.widget.Switch;
-
-import com.android.clothingrecycle.LogicParam;
-
 /**
  * Created by raimy on 2018-03-22.
  */
@@ -53,7 +49,7 @@ public class AsyncCmdThread extends  Thread{
                 TransParam tParam = new TransParam(param);
                 tParam.result = TransParam.eResult.Result_Suc;
                 tParam.retInfo = retInfo;
-                mCallBack.OnCallBack(tParam);
+                mCallBack.OnTransCallBack(tParam);
             }
 
             try {

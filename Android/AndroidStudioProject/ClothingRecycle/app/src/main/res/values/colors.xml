@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="detail_title">@android:color/holo_green_light</color>
+    <color name="popupwindow">@android:color/holo_orange_dark</color>
 </resources>

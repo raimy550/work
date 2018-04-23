@@ -4,4 +4,10 @@
     <string name="content_cleaning">正在清理柜子，清理完请全部关闭!!</string>
     <string name="content_gridfull">柜子已满！等待清理中...</string>
     <string name="info_default">捐出一份爱心,奉献一片真情</string>
+
+    <string name="detail_title">柜子详情</string>
+    <string name="detail_total">总数：</string>
+    <string name="detail_used">已使用：</string>
+    <string name="detail_empty">空箱：</string>
+    <string name="detail_clean">取件</string>
 </resources>

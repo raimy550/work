@@ -1,4 +1,4 @@
-package com.raimy.utils;
+package com.android.raimy.utils;
 
 import java.util.concurrent.atomic.AtomicReference;
 

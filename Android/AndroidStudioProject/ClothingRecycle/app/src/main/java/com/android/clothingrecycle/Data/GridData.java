@@ -36,6 +36,8 @@ public class GridData {
 
     public Map<Integer, Integer> getGridStates() {
         Map<Integer, Integer> map = new HashMap<>(gridStates);
+        new HashMap<>();
+        SortDataByKey();
         return map;
     }
 

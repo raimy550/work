@@ -3,34 +3,30 @@ package com.android.clothingrecycle;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.camera2.params.Face;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.clothingrecycle.Data.DoorState;
-import com.raimy.utils.MyTimer;
-import com.raimy.utils.ToastHelper;
+import com.android.raimy.utils.MyTimer;
+import com.android.raimy.utils.ToastHelper;
+import com.android.raimy.utils.ui.framework.InterfaceUi;
+import com.android.raimy.utils.ui.framework.UiHandler;
 
-import java.io.InputStream;
-import java.text.Format;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-        LogicParam.LogicCallBack, MyTimer.ITimerCallBack{
+        LogicParam.LogicCallBack, MyTimer.ITimerCallBack, InterfaceUi, UiHandler.HandleUiCallBack{
 
     private Logic mLogic;
     private ImageView mIVQuickMark;
-    private Handler mUIHandler;
+    private UiHandler mUIHandler;
     private ProgressDialog mProgressDlg;
     private MyTimer mQrTimer;
     private TextView mTvContent;
@@ -39,8 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Init();
+        InitLogic();
         InitView();
+
     }
 
 
@@ -56,39 +53,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mProgressDlg.dismiss();
     }
 
-    public class HandlerCallBack implements  Handler.Callback{
-
-        @Override
-        public boolean handleMessage(Message msg) {
-            LogicParam param = (LogicParam)msg.getData().getSerializable("LogicParam");
-            switch (param.logicType){
-                case DownloadQRCodes:
-                    DoParamDownloadQRCodes(param);
-                    break;
-                case DoorStateChange:
-                    DoParamDoorStateChange(param);
-                    break;
-                case GridStateFull:
-                    DoParamGridStateFull(param);
-                    break;
-                case GetEmptyGridFail:
-                    ToastHelper.showToast(MainActivity.this, "获取空箱子失败");
-                    DismissProgressDlg();
-                    break;
-                case GetNextEmptyGridQr:
-                    ShowProgressDlg();
-                    break;
-                case GridCleaning:
-                    mIVQuickMark.setImageBitmap(null);
-                    mTvContent.setText(R.string.content_cleaning);
-                    break;
-                case GridCleanOver:
-                    UpdateGridUsedContent();
-                    break;
-                default:
-                    break;
-            }
-            return false;
+    @Override
+    public void OnUiCallBack(Serializable logicParam) {
+        LogicParam param = (LogicParam)(logicParam);
+        switch (param.logicType){
+            case DownloadQRCodes:
+                DoParamDownloadQRCodes(param);
+                break;
+            case DoorStateChange:
+                DoParamDoorStateChange(param);
+                break;
+            case GridStateFull:
+                DoParamGridStateFull(param);
+                break;
+            case GetEmptyGridFail:
+                ToastHelper.showToast(MainActivity.this, "获取空箱子失败");
+                DismissProgressDlg();
+                break;
+            case GetNextEmptyGridQr:
+                ShowProgressDlg();
+                break;
+            case GridCleaning:
+                mIVQuickMark.setImageBitmap(null);
+                mTvContent.setText(R.string.content_cleaning);
+                break;
+            case GridCleanOver:
+                UpdateGridUsedContent();
+                break;
+            default:
+                break;
         }
     }
 
@@ -123,26 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void DoParamDownloadQRCodes(LogicParam param){
        DismissProgressDlg();
         Bitmap bmp;
-//        InputStream bmpStream;
-//
-//        BitmapFactory.Options factory = new BitmapFactory.Options();
-//        factory.inJustDecodeBounds = true;
-//        bmpStream = mLogic.GetQrCodeStream();
-//        bmp = BitmapFactory.decodeStream(bmpStream, null, factory);
-//
-//        int dh = mIVQuickMark.getMeasuredHeight();
-//        int dw = mIVQuickMark.getMeasuredWidth();
-//        int hRatio = (int)Math.ceil(factory.outHeight / (float)dh);
-//        int wRatio = (int)Math.ceil(factory.outWidth / (float)dw);
-//        if(hRatio >  1 || wRatio > 1){
-//            if(hRatio > wRatio){
-//                factory.inSampleSize = hRatio;
-//            }else{
-//                factory.inSampleSize = wRatio;
-//            }
-//        }
-//
-//        factory.inJustDecodeBounds = false;
        bmp = mLogic.getmQrCode();
         mIVQuickMark.setImageBitmap(bmp);
     }
@@ -156,22 +129,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void Init(){
-        mUIHandler = new Handler(new HandlerCallBack());
-        mQrTimer = new MyTimer(this, 300, 4000);
-        mLogic = Logic.ObjCreater.GetInstance();
-        mLogic.Init(getApplicationContext(), this);
-
-
-    }
-
-    private void InitView(){
+    @Override
+    public void InitView(){
         Button btn = (Button) findViewById(R.id.btn_interfacetest);
         btn.setOnClickListener(this);
         btn = (Button) findViewById(R.id.btn_make_qucode);
         btn.setOnClickListener(this);
         btn = (Button) findViewById(R.id.btn_reset);
         btn.setOnClickListener(this);
+        btn = (Button) findViewById(R.id.btn_stretch);
+        btn.setOnClickListener(this);
+
+
         mTvContent = (TextView) findViewById(R.id.tv_content);
         mProgressDlg = new ProgressDialog(this);
         mProgressDlg.setTitle("正在加载中");
@@ -179,6 +148,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int nSize = mLogic.GetEmptyGridSize();
         mTvContent.setText(getResources().getString(R.string.content_scan)+"(空箱："+nSize+"个)");
         ShowProgressDlg();
+    }
+
+    @Override
+    public void UnInitView() {
+
+    }
+
+    @Override
+    public boolean InitLogic() {
+        mUIHandler = new UiHandler(this);
+        mQrTimer = new MyTimer(this, 300, 4000);
+        mLogic = Logic.ObjCreater.GetInstance();
+        mLogic.Init(getApplicationContext(), this);
+
+        return true;
+    }
+
+    @Override
+    public void UnInitLogic() {
+
     }
 
     private void ShowProgressDlg(){
@@ -202,18 +191,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_reset:
                 mLogic.DoLogicReset();
                 break;
+            case R.id.btn_stretch:
+                ShowDetail();
+                break;
             default:
                 break;
         }
     }
 
+    private void ShowDetail(){
+        DetailPopupWindow popupWindow = new DetailPopupWindow(this);
+        popupWindow.Show();
+    }
+
     @Override
     public void OnLogicCallBack(LogicParam param) {
-        Message msg = new Message();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("LogicParam", param);
-        msg.setData(bundle);
-        mUIHandler.sendMessage(msg);
-
+       mUIHandler.SendMessage(param);
     }
 }

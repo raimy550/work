@@ -141,6 +141,12 @@
         <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
         <!-- Required. AppKey copied from Portal -->
         <meta-data android:name="JPUSH_APPKEY" android:value="f0e91bf9fce29d5fa79063a7"/>
+
+        <service android:name="com.peripheral.printer.api.PrinterLoaclService">
+            <intent-filter>
+                <action android:name="com.peripheral.printer.api.PrinterLoaclService"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

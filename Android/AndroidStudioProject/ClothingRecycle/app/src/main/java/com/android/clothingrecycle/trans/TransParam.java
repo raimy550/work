@@ -1,7 +1,5 @@
 package com.android.clothingrecycle.trans;
 
-import java.util.Map;
-
 /**
  * Created by raimy on 2018-03-22.
  */

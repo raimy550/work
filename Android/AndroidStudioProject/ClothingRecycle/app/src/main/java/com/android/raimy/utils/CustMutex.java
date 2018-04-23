@@ -1,4 +1,4 @@
-package com.raimy.utils;
+package com.android.raimy.utils;
 
 public class CustMutex  
 {  
@@ -16,7 +16,10 @@ public class CustMutex
     ////////////////////////////////////////////////  
     //  lock  
     ////////////////////////////////////////////////  
-      
+
+    public void SetLock(boolean bLock){
+        syncLock = bLock;
+    }
     public synchronized void lock()  
     {  
         while(syncLock == true) {  

@@ -3,14 +3,12 @@ package com.android.clothingrecycle.Data;
 import android.content.Context;
 import android.os.Environment;
 
-import com.raimy.utils.AbstractSingleton;
-import com.raimy.utils.LogHelper;
+import com.android.raimy.utils.AbstractSingleton;
+import com.android.raimy.utils.LogHelper;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.transform.dom.DOMResult;
 
 /**
  * Created by raimy on 2018-03-23.
@@ -57,7 +55,7 @@ public class DataManager {
             mGridData = new GridData();
             mGridData.setGridIdent("abc-001");
             Map<Integer, Integer> map= new HashMap<Integer, Integer>();
-            map.put(6, 0);
+            //map.put(6, 0);
             map.put(7, 0);
             map.put(8, 0);
             mGridData.setGridStates(map);
@@ -68,6 +66,7 @@ public class DataManager {
     }
 
     public void ResetData(){
+        SetCleaning(false);
         File file = new File(mDataSavePath);
         if(file.exists()){
             file.delete();
@@ -108,6 +107,10 @@ public class DataManager {
         nRet = mGridData.GetEmptyGridSize();
 
         return nRet;
+    }
+
+    public boolean IsAllGridEmpty(){
+       return  GetEmptyGridSize() == GetGridCount();
     }
 
     public int GetGridCount(){
