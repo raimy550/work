@@ -10,6 +10,7 @@ import java.util.Comparator;
 
 public class Grid implements Comparable<Grid>{
     //箱子型号小，中，大
+    public final static int Grid_Type_None = -1;
     public final static int Grid_Type_small = 0;
     public final static int Grid_Type_normal = 1;
     public final static int Grid_Type_big = 2;

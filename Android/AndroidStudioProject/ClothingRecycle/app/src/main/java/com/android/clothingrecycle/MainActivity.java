@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void UpdateGridUsedContent(){
-        int nSize  = mLogic.GetEmptyGridSize();
+        int nSize  = mLogic.GetEmptyGridSize(Grid.Grid_Type_None);
         if(nSize!=0){
             String strRet = getResources().getString(R.string.content_scan)+"(空箱："+nSize+"个)";
             mTvContent.setText(strRet);
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mProgressDlg = new ProgressDialog(this);
         mProgressDlg.setTitle("正在加载中");
         mIVQuickMark = (ImageView)findViewById(R.id.iv_quickmark);
-        int nSize = mLogic.GetEmptyGridSize();
+        int nSize = mLogic.GetEmptyGridSize(Grid.Grid_Type_None);
         mTvContent.setText(getResources().getString(R.string.content_scan)+"(空箱："+nSize+"个)");
         ShowProgressDlg();
     }

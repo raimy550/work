@@ -92,30 +92,30 @@ public class DataManager {
         return mCabinet.GetChangedDoors(bStates, retInfo);
     }
 
-    public int GetEmptyGrid(){
+    public int GetEmptyGrid(int gridType){
         int nRet = -1;
-        nRet = mCabinet.GetEmptyGrid();
+        nRet = mCabinet.GetEmptyGrid(gridType);
 
         return nRet;
     }
 
-    public int GetEmptyGridSize(){
+    public int GetEmptyGridCount(int gridType){
         int nRet = 0;
-        nRet = mCabinet.GetEmptyGridSize();
+        nRet = mCabinet.GetEmptyGridCount(gridType);
 
         return nRet;
     }
 
     public boolean IsAllGridEmpty(){
-       return  GetEmptyGridSize() == GetGridCount();
+       return  GetEmptyGridCount(Grid.Grid_Type_None) == GetGridCount(Grid.Grid_Type_None);
     }
 
-    public int GetGridCount(){
-        return mCabinet.GetGridCount();
+    public int GetGridCount(int gridType){
+        return mCabinet.GetGridCount(gridType);
     }
 
-    public int GetGridUsedCount(){
-        return mCabinet.GetGridUsedCount();
+    public int GetGridUsedCount(int gridType){
+        return mCabinet.GetGridUsedCount(gridType);
     }
 
     public List<Grid> GetGridStates(){

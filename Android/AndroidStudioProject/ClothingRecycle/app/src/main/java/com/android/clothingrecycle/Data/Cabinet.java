@@ -88,13 +88,17 @@ public class Cabinet {
         return ret;
     }
 
-    public int GetEmptyGrid(){
+    public int GetEmptyGrid(int gridType){
         int nRet = -1;
         mMutex.lock();
         for (int i=0; i<mGrids.size();i++){
             Grid grid = mGrids.get(i);
             if(grid.getGridState() == Grid.Grid_State_Empty){
-                nRet = grid.getGridNo();
+                if(gridType == Grid.Grid_Type_None){
+                    nRet = grid.getGridNo();
+                }else if(gridType == grid.getGridType()){
+                    nRet = grid.getGridNo();
+                }
                 break;
             }
         }
@@ -102,30 +106,52 @@ public class Cabinet {
         return nRet;
     }
 
-    public int GetEmptyGridSize(){
+    public int GetEmptyGridCount(int gridType){
         int nRet = 0;
         mMutex.lock();
         for (int i=0; i<mGrids.size();i++){
             Grid grid = mGrids.get(i);
             if(grid.getGridState() == Grid.Grid_State_Empty){
-                nRet++;
+                if(gridType == Grid.Grid_Type_None){
+                    nRet++;
+                }else if(gridType == grid.getGridType()){
+                    nRet++;
+                }
             }
         }
         mMutex.unlock();
+
         return nRet;
     }
 
-    public int GetGridCount(){
-        return mGrids.size();
+    public int GetGridCount(int gridType){
+        int nRet = 0;
+        if(gridType == Grid.Grid_Type_None){
+            nRet = mGrids.size();
+        }else{
+            mMutex.lock();
+            for (int i=0; i<mGrids.size();i++){
+                Grid grid = mGrids.get(i);
+                if(gridType == grid.getGridType()){
+                   nRet++;
+                }
+            }
+            mMutex.unlock();
+        }
+        return nRet;
     }
 
-    public int GetGridUsedCount(){
+    public int GetGridUsedCount(int gridType){
         int nRet = 0;
         mMutex.lock();
         for (int i=0; i<mGrids.size();i++){
             Grid grid = mGrids.get(i);
             if(grid.getGridState() == Grid.Grid_State_Used){
-                nRet++;
+                if(gridType == Grid.Grid_Type_None){
+                    nRet++;
+                }else if(gridType == grid.getGridType()){
+                    nRet++;
+                }
             }
         }
         mMutex.unlock();

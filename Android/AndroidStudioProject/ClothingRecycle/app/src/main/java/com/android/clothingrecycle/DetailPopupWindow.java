@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.android.clothingrecycle.Data.Grid;
+
 /**
  * Created by raimy on 2018-04-19.
  */
@@ -28,9 +30,9 @@ public class DetailPopupWindow implements View.OnClickListener{
     }
 
     private void UpdateContent(){
-        mTvTotalValue.setText(Integer.toString(mLogic.GetTotalGridSize()));
-        mTvUsedValue.setText(Integer.toString(mLogic.GetUsedGridSize()));
-        mTvEmptyValue.setText(Integer.toString(mLogic.GetEmptyGridSize()));
+        mTvTotalValue.setText(Integer.toString(mLogic.GetTotalGridSize(Grid.Grid_Type_None)));
+        mTvUsedValue.setText(Integer.toString(mLogic.GetUsedGridSize(Grid.Grid_Type_None)));
+        mTvEmptyValue.setText(Integer.toString(mLogic.GetEmptyGridSize(Grid.Grid_Type_None)));
     }
 
     private void InitView(){

@@ -97,13 +97,14 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
 
     private void InitHttp(){
         mHttpManager.HttpRegisterCabinet(mCabinnetNumber, mJpushRegistrationID,
-                mDataManager.GetGridCount(), mDataManager.GetGridUsedCount());
+                mDataManager.GetGridCount(Grid.Grid_Type_None),
+                mDataManager.GetGridUsedCount(Grid.Grid_Type_None));
 
        DoHttpGetQRCode();
     }
 
     private void DoHttpGetQRCode(){
-        int nGrid = mDataManager.GetEmptyGrid();
+        int nGrid = mDataManager.GetEmptyGrid(Grid.Grid_Type_None);
         if(nGrid != -1) {
             mHttpManager.HttpGetQRCode(mCabinnetNumber, nGrid);
         }else{
@@ -160,8 +161,8 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
                 //箱子都关闭，上传状态,退出清理模式
                 mDataManager.SetCleaning(false);
                 mHttpManager.HttpUploadGridStatus(mCabinnetNumber,
-                        mDataManager.GetGridCount(),
-                        mDataManager.GetGridUsedCount());
+                        mDataManager.GetGridCount(Grid.Grid_Type_None),
+                        mDataManager.GetGridUsedCount(Grid.Grid_Type_None));
                 mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GridCleanOver));
                 mLogicCallBack.OnLogicCallBack(new LogicParam(LogicParam.ELogicType.GetNextEmptyGridQr));
                 DoHttpGetQRCode();
@@ -185,10 +186,10 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
                 mDataManager.UpdateGridData(key, Grid.Grid_State_Used);
                 mDataManager.UpdateDoorState(key, Grid.Door_state_close);
                 mHttpManager.HttpUploadGridStatus(mCabinnetNumber,
-                        mDataManager.GetGridCount(),
-                        mDataManager.GetGridUsedCount());//箱门关闭，上传柜子状态
+                        mDataManager.GetGridCount(Grid.Grid_Type_None),
+                        mDataManager.GetGridUsedCount(Grid.Grid_Type_None));//箱门关闭，上传柜子状态
 
-                if (-1 == mDataManager.GetEmptyGrid()) {
+                if (-1 == mDataManager.GetEmptyGrid(Grid.Grid_Type_None)) {
                     LogicParam lParam = new LogicParam();
                     lParam.logicType = LogicParam.ELogicType.GridStateFull;
                     mLogicCallBack.OnLogicCallBack(lParam);
@@ -290,15 +291,15 @@ public class Logic implements com.squareup.okhttp.Callback, TransManager.ICallBa
         }
     }
 
-    public int GetEmptyGridSize(){
-        return mDataManager.GetEmptyGridSize();
+    public int GetEmptyGridSize(int gridType){
+        return mDataManager.GetEmptyGridCount(gridType);
     }
 
-    public int GetTotalGridSize(){
-        return mDataManager.GetGridCount();
+    public int GetTotalGridSize(int gridType){
+        return mDataManager.GetGridCount(gridType);
     }
 
-    public int GetUsedGridSize(){
-        return mDataManager.GetGridUsedCount();
+    public int GetUsedGridSize(int gridType){
+        return mDataManager.GetGridUsedCount(gridType);
     }
 }
